@@ -27,18 +27,22 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
 set(SOURCES
-    main.cpp
-    mainwindow.cpp
-    mainwindow.h
-    mainwindow.ui
-    qdarkstyle/style.qrc
-    rgbcolor.cpp
-    rgbcolor.h)
+        main.cpp
+        mainwindow.cpp
+        mainwindow.h
+        mainwindow.ui
+        qdarkstyle/style.qrc
+        rgbcolor.cpp
+        rgbcolor.h
+        xyzcolor.cpp
+        xyzcolor.h
+        labcolor.cpp
+        labcolor.h)
 
-if(ANDROID)
-  add_library(Lab1 SHARED ${SOURCES})
-else()
-  add_executable(Lab1 ${SOURCES})
-endif()
+if (ANDROID)
+    add_library(Lab1 SHARED ${SOURCES})
+else ()
+    add_executable(Lab1 ${SOURCES})
+endif ()
 
 target_link_libraries(Lab1 PRIVATE Qt5::Widgets)

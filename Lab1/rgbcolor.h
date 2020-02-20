@@ -3,10 +3,10 @@
 class RGBColor
 {
 public:
-    RGBColor();
-    RGBColor(int r, int g, int b);
+    RGBColor ();
+    RGBColor (float r, float g, float b);
 
-    int r_;
-    int g_;
-    int b_;
+    float r_;
+    float g_;
+    float b_;
 };
