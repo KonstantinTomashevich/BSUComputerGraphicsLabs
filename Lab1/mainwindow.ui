@@ -1,332 +1,426 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>MainWindow</class>
-    <widget class="QMainWindow" name="MainWindow">
-        <property name="geometry">
-            <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>961</width>
-                <height>600</height>
-            </rect>
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>961</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Konstantin Tomashevich Lab1</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <layout class="QGridLayout" name="gridLayout" columnstretch="1,1,1,0,0">
+      <item row="1" column="0">
+       <widget class="QFrame" name="labFrame">
+        <property name="styleSheet">
+         <string notr="true"/>
         </property>
-        <property name="windowTitle">
-            <string>Konstantin Tomashevich Lab1</string>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
         </property>
-        <widget class="QWidget" name="centralwidget">
-            <layout class="QGridLayout" name="gridLayout_2">
-                <item row="0" column="0">
-                    <layout class="QGridLayout" name="gridLayout" columnstretch="1,1,1,0,0">
-                        <item row="1" column="0">
-                            <widget class="QFrame" name="labFrame">
-                                <property name="styleSheet">
-                                    <string notr="true"/>
-                                </property>
-                                <property name="frameShape">
-                                    <enum>QFrame::StyledPanel</enum>
-                                </property>
-                                <layout class="QHBoxLayout" name="horizontalLayout_11">
-                                    <item>
-                                        <layout class="QVBoxLayout" name="xyzLayout_2">
-                                            <item>
-                                                <widget class="QLabel" name="labLabel">
-                                                    <property name="font">
-                                                        <font>
-                                                            <pointsize>12</pointsize>
-                                                        </font>
-                                                    </property>
-                                                    <property name="text">
-                                                        <string>LAB</string>
-                                                    </property>
-                                                    <property name="alignment">
-                                                        <set>Qt::AlignCenter</set>
-                                                    </property>
-                                                    <property name="wordWrap">
-                                                        <bool>false</bool>
-                                                    </property>
-                                                </widget>
-                                            </item>
-                                            <item>
-                                                <widget class="QWidget" name="labLWidget" native="true">
-                                                    <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="8,2">
-                                                        <item>
-                                                            <widget class="QSlider" name="labLSlider">
-                                                                <property name="minimum">
-                                                                    <number>-128</number>
-                                                                </property>
-                                                                <property name="maximum">
-                                                                    <number>127</number>
-                                                                </property>
-                                                                <property name="orientation">
-                                                                    <enum>Qt::Horizontal</enum>
-                                                                </property>
-                                                            </widget>
-                                                        </item>
-                                                        <item>
-                                                            <widget class="QLineEdit" name="labLEdit"/>
-                                                        </item>
-                                                    </layout>
-                                                </widget>
-                                            </item>
-                                            <item>
-                                                <widget class="QWidget" name="labAWidget" native="true">
-                                                    <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="8,2">
-                                                        <item>
-                                                            <widget class="QSlider" name="labASlider">
-                                                                <property name="minimum">
-                                                                    <number>-128</number>
-                                                                </property>
-                                                                <property name="maximum">
-                                                                    <number>127</number>
-                                                                </property>
-                                                                <property name="orientation">
-                                                                    <enum>Qt::Horizontal</enum>
-                                                                </property>
-                                                            </widget>
-                                                        </item>
-                                                        <item>
-                                                            <widget class="QLineEdit" name="labAEdit"/>
-                                                        </item>
-                                                    </layout>
-                                                </widget>
-                                            </item>
-                                            <item>
-                                                <widget class="QWidget" name="labBWidget" native="true">
-                                                    <layout class="QHBoxLayout" name="horizontalLayout_10"
-                                                            stretch="8,2">
-                                                        <item>
-                                                            <widget class="QSlider" name="labBSlider">
-                                                                <property name="minimum">
-                                                                    <number>-128</number>
-                                                                </property>
-                                                                <property name="maximum">
-                                                                    <number>127</number>
-                                                                </property>
-                                                                <property name="orientation">
-                                                                    <enum>Qt::Horizontal</enum>
-                                                                </property>
-                                                            </widget>
-                                                        </item>
-                                                        <item>
-                                                            <widget class="QLineEdit" name="labBEdit"/>
-                                                        </item>
-                                                    </layout>
-                                                </widget>
-                                            </item>
-                                        </layout>
-                                    </item>
-                                </layout>
-                            </widget>
-                        </item>
-                        <item row="0" column="2" rowspan="2" colspan="3">
-                            <widget class="QFrame" name="palleteFrame">
-                                <property name="frameShape">
-                                    <enum>QFrame::StyledPanel</enum>
-                                </property>
-                            </widget>
-                        </item>
-                        <item row="0" column="1">
-                            <widget class="QFrame" name="colorFrame">
-                                <property name="autoFillBackground">
-                                    <bool>true</bool>
-                                </property>
-                                <property name="frameShape">
-                                    <enum>QFrame::StyledPanel</enum>
-                                </property>
-                            </widget>
-                        </item>
-                        <item row="0" column="0">
-                            <widget class="QFrame" name="rgbFrame">
-                                <property name="frameShape">
-                                    <enum>QFrame::StyledPanel</enum>
-                                </property>
-                                <layout class="QVBoxLayout" name="verticalLayout_4">
-                                    <item>
-                                        <layout class="QVBoxLayout" name="rgbLayout">
-                                            <item>
-                                                <widget class="QLabel" name="rgbLabel">
-                                                    <property name="font">
-                                                        <font>
-                                                            <pointsize>12</pointsize>
-                                                        </font>
-                                                    </property>
-                                                    <property name="text">
-                                                        <string>RGB</string>
-                                                    </property>
-                                                    <property name="alignment">
-                                                        <set>Qt::AlignCenter</set>
-                                                    </property>
-                                                    <property name="wordWrap">
-                                                        <bool>false</bool>
-                                                    </property>
-                                                </widget>
-                                            </item>
-                                            <item>
-                                                <widget class="QWidget" name="rgbRWidget" native="true">
-                                                    <layout class="QHBoxLayout" name="horizontalLayout" stretch="8,2">
-                                                        <item>
-                                                            <widget class="QSlider" name="rgbRSlider">
-                                                                <property name="maximum">
-                                                                    <number>255</number>
-                                                                </property>
-                                                                <property name="orientation">
-                                                                    <enum>Qt::Horizontal</enum>
-                                                                </property>
-                                                            </widget>
-                                                        </item>
-                                                        <item>
-                                                            <widget class="QLineEdit" name="rgbREdit"/>
-                                                        </item>
-                                                    </layout>
-                                                </widget>
-                                            </item>
-                                            <item>
-                                                <widget class="QWidget" name="rgbGWidget" native="true">
-                                                    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="8,2">
-                                                        <item>
-                                                            <widget class="QSlider" name="rgbGSlider">
-                                                                <property name="maximum">
-                                                                    <number>255</number>
-                                                                </property>
-                                                                <property name="orientation">
-                                                                    <enum>Qt::Horizontal</enum>
-                                                                </property>
-                                                            </widget>
-                                                        </item>
-                                                        <item>
-                                                            <widget class="QLineEdit" name="rgbGEdit"/>
-                                                        </item>
-                                                    </layout>
-                                                </widget>
-                                            </item>
-                                            <item>
-                                                <widget class="QWidget" name="rgbBWidget" native="true">
-                                                    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="8,2">
-                                                        <item>
-                                                            <widget class="QSlider" name="rgbBSlider">
-                                                                <property name="maximum">
-                                                                    <number>255</number>
-                                                                </property>
-                                                                <property name="orientation">
-                                                                    <enum>Qt::Horizontal</enum>
-                                                                </property>
-                                                            </widget>
-                                                        </item>
-                                                        <item>
-                                                            <widget class="QLineEdit" name="rgbBEdit"/>
-                                                        </item>
-                                                    </layout>
-                                                </widget>
-                                            </item>
-                                        </layout>
-                                    </item>
-                                </layout>
-                            </widget>
-                        </item>
-                        <item row="1" column="1">
-                            <widget class="QFrame" name="xyzFrame">
-                                <property name="frameShape">
-                                    <enum>QFrame::StyledPanel</enum>
-                                </property>
-                                <layout class="QHBoxLayout" name="horizontalLayout_7">
-                                    <item>
-                                        <layout class="QVBoxLayout" name="xyzLayout">
-                                            <item>
-                                                <widget class="QLabel" name="xyzLabel">
-                                                    <property name="font">
-                                                        <font>
-                                                            <pointsize>12</pointsize>
-                                                        </font>
-                                                    </property>
-                                                    <property name="text">
-                                                        <string>XYZ</string>
-                                                    </property>
-                                                    <property name="alignment">
-                                                        <set>Qt::AlignCenter</set>
-                                                    </property>
-                                                    <property name="wordWrap">
-                                                        <bool>false</bool>
-                                                    </property>
-                                                </widget>
-                                            </item>
-                                            <item>
-                                                <widget class="QWidget" name="xyzXWidget" native="true">
-                                                    <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="8,2">
-                                                        <item>
-                                                            <widget class="QSlider" name="xyzXSlider">
-                                                                <property name="maximum">
-                                                                    <number>100</number>
-                                                                </property>
-                                                                <property name="orientation">
-                                                                    <enum>Qt::Horizontal</enum>
-                                                                </property>
-                                                            </widget>
-                                                        </item>
-                                                        <item>
-                                                            <widget class="QLineEdit" name="xyzXEdit"/>
-                                                        </item>
-                                                    </layout>
-                                                </widget>
-                                            </item>
-                                            <item>
-                                                <widget class="QWidget" name="xyzYWidget" native="true">
-                                                    <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="8,2">
-                                                        <item>
-                                                            <widget class="QSlider" name="xyzYSlider">
-                                                                <property name="maximum">
-                                                                    <number>100</number>
-                                                                </property>
-                                                                <property name="orientation">
-                                                                    <enum>Qt::Horizontal</enum>
-                                                                </property>
-                                                            </widget>
-                                                        </item>
-                                                        <item>
-                                                            <widget class="QLineEdit" name="xyzYEdit"/>
-                                                        </item>
-                                                    </layout>
-                                                </widget>
-                                            </item>
-                                            <item>
-                                                <widget class="QWidget" name="xyzZWidget" native="true">
-                                                    <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="8,2">
-                                                        <item>
-                                                            <widget class="QSlider" name="xyzZSlider">
-                                                                <property name="maximum">
-                                                                    <number>100</number>
-                                                                </property>
-                                                                <property name="orientation">
-                                                                    <enum>Qt::Horizontal</enum>
-                                                                </property>
-                                                            </widget>
-                                                        </item>
-                                                        <item>
-                                                            <widget class="QLineEdit" name="xyzZEdit"/>
-                                                        </item>
-                                                    </layout>
-                                                </widget>
-                                            </item>
-                                        </layout>
-                                    </item>
-                                </layout>
-                            </widget>
-                        </item>
-                    </layout>
-                </item>
-            </layout>
-        </widget>
-        <widget class="QMenuBar" name="menubar">
-            <property name="geometry">
-                <rect>
-                    <x>0</x>
-                    <y>0</y>
-                    <width>961</width>
-                    <height>25</height>
-                </rect>
-            </property>
-        </widget>
-        <widget class="QStatusBar" name="statusbar"/>
-    </widget>
-    <resources/>
-    <connections/>
+        <layout class="QHBoxLayout" name="horizontalLayout_11">
+         <item>
+          <layout class="QVBoxLayout" name="xyzLayout_2">
+           <item>
+            <widget class="QLabel" name="labLabel">
+             <property name="font">
+              <font>
+               <pointsize>12</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>LAB</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="wordWrap">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="labLWidget" native="true">
+             <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="6,4">
+              <item>
+               <widget class="QSlider" name="labLSlider">
+                <property name="minimum">
+                 <number>0</number>
+                </property>
+                <property name="maximum">
+                 <number>100</number>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="labLEdit">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="labAWidget" native="true">
+             <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="6,4">
+              <item>
+               <widget class="QSlider" name="labASlider">
+                <property name="minimum">
+                 <number>-128</number>
+                </property>
+                <property name="maximum">
+                 <number>128</number>
+                </property>
+                <property name="value">
+                 <number>-128</number>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="labAEdit">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="labBWidget" native="true">
+             <layout class="QHBoxLayout" name="horizontalLayout_10" stretch="6,4">
+              <item>
+               <widget class="QSlider" name="labBSlider">
+                <property name="minimum">
+                 <number>-128</number>
+                </property>
+                <property name="maximum">
+                 <number>128</number>
+                </property>
+                <property name="value">
+                 <number>-128</number>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="labBEdit">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="0" column="2" rowspan="2" colspan="3">
+       <widget class="QFrame" name="palleteFrame">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QFrame" name="colorFrame">
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_12">
+         <item>
+          <widget class="QWidget" name="colorWidget" native="true"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QFrame" name="rgbFrame">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <layout class="QVBoxLayout" name="rgbLayout">
+           <item>
+            <widget class="QLabel" name="rgbLabel">
+             <property name="font">
+              <font>
+               <pointsize>12</pointsize>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true"/>
+             </property>
+             <property name="text">
+              <string>RGB</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="wordWrap">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="rgbRWidget" native="true">
+             <layout class="QHBoxLayout" name="horizontalLayout" stretch="6,4">
+              <item>
+               <widget class="QSlider" name="rgbRSlider">
+                <property name="maximum">
+                 <number>255</number>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="rgbREdit">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="rgbGWidget" native="true">
+             <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="6,4">
+              <item>
+               <widget class="QSlider" name="rgbGSlider">
+                <property name="maximum">
+                 <number>255</number>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="rgbGEdit">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="rgbBWidget" native="true">
+             <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="6,4">
+              <item>
+               <widget class="QSlider" name="rgbBSlider">
+                <property name="maximum">
+                 <number>255</number>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="rgbBEdit">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QFrame" name="xyzFrame">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <layout class="QVBoxLayout" name="xyzLayout">
+           <item>
+            <widget class="QLabel" name="xyzLabel">
+             <property name="font">
+              <font>
+               <pointsize>12</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>XYZ</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="wordWrap">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="xyzXWidget" native="true">
+             <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="6,4">
+              <item>
+               <widget class="QSlider" name="xyzXSlider">
+                <property name="maximum">
+                 <number>95</number>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="xyzXEdit">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="xyzYWidget" native="true">
+             <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="6,4">
+              <item>
+               <widget class="QSlider" name="xyzYSlider">
+                <property name="maximum">
+                 <number>100</number>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="xyzYEdit">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="xyzZWidget" native="true">
+             <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="6,4">
+              <item>
+               <widget class="QSlider" name="xyzZSlider">
+                <property name="maximum">
+                 <number>109</number>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="xyzZEdit">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>961</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
 </ui>

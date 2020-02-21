@@ -5,7 +5,7 @@ class RGBColor
 {
 public:
     RGBColor ();
-    RGBColor (unsigned char r, unsigned char g, unsigned char b, bool rounded);
+    RGBColor (unsigned char r, unsigned char g, unsigned char b, bool rounded = false);
 
     static RGBColor fromXYZ(const XYZColor &xyz);
 

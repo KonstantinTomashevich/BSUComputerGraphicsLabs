@@ -15,10 +15,10 @@ int main(int argc, char *argv[])
     else   {
         stylesheetFile.open(QFile::ReadOnly | QFile::Text);
         QTextStream stream(&stylesheetFile);
-        qApp->setStyleSheet(stream.readAll());
+        app.setStyleSheet(stream.readAll());
     }
 
     MainWindow mainWindow;
     mainWindow.show();
-    return app.exec();
+    return QApplication::exec();
 }
