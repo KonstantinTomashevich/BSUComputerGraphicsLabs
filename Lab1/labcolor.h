@@ -1,12 +1,16 @@
 #pragma once
 
+class XYZColor;
 class LABColor
 {
 public:
-    LABColor();
-    LABColor (float l, float a, float b);
+    LABColor ();
+    LABColor (unsigned char l, short a, short b, bool rounded);
 
-    float l_;
-    float a_;
-    float b_;
+    static LABColor fromXYZ(const XYZColor &xyz);
+
+    unsigned char l_;
+    short a_;
+    short b_;
+    bool rounded_;
 };

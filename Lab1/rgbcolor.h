@@ -1,12 +1,16 @@
 #pragma once
 
+class XYZColor;
 class RGBColor
 {
 public:
     RGBColor ();
-    RGBColor (float r, float g, float b);
+    RGBColor (unsigned char r, unsigned char g, unsigned char b, bool rounded);
 
-    float r_;
-    float g_;
-    float b_;
+    static RGBColor fromXYZ(const XYZColor &xyz);
+
+    unsigned char r_;
+    unsigned char g_;
+    unsigned char b_;
+    bool rounded_;
 };

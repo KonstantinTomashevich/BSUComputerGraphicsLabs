@@ -37,7 +37,7 @@ set(SOURCES
         xyzcolor.cpp
         xyzcolor.h
         labcolor.cpp
-        labcolor.h)
+        labcolor.h utils.cpp utils.h)
 
 if (ANDROID)
     add_library(Lab1 SHARED ${SOURCES})
