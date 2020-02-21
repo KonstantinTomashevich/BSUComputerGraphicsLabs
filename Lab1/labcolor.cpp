@@ -1,5 +1,6 @@
 #include "labcolor.h"
 #include "xyzcolor.h"
+#include "utils.h"
 #include <cmath>
 
 LABColor::LABColor ()
@@ -25,8 +26,14 @@ static float F (float x)
 
 LABColor LABColor::fromXYZ (const XYZColor &xyz)
 {
-    return {(unsigned char) lroundf (116 * F (xyz.y_ / 100.0f)),
-            (short) lroundf (500.0f * (F (xyz.x_ / 95.047f) - F (xyz.y_ / 100.0f))),
-            (short) lroundf (200.0f * (F (xyz.y_ / 100.0f) - F (xyz.z_ / 108.883f))),
-            false};
+    bool  rounded = false;
+    float l = 116 * F (xyz.y_ / 100.0f);
+    float a = 500.0f * (F (xyz.x_ / 95.047f) - F (xyz.y_ / 100.0f));
+    float b = 200.0f * (F (xyz.y_ / 100.0f) - F (xyz.z_ / 108.883f));
+
+    l = clampf (l, 0.0f, 100.0f, rounded);
+    a = clampf (a, -128.0f, 128.0f, rounded);
+    b = clampf (b, -128.0f, 128.0f, rounded);
+
+    return {(unsigned char) lroundf (l), (short) lroundf (a), (short) lroundf (b), rounded};
 }

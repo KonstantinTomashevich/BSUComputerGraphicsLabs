@@ -29,11 +29,11 @@ void MainWindow::updateWidgetFromRGB ()
 }
 
 void MainWindow::updateEditionWidgets ()
-{    
+{
     setSliderSilently (ui_->rgbRSlider, rgb_.r_);
     setSliderSilently (ui_->rgbGSlider, rgb_.g_);
     setSliderSilently (ui_->rgbBSlider, rgb_.b_);
-    
+
     setTextSilently (ui_->rgbREdit, QString::number (rgb_.r_));
     setTextSilently (ui_->rgbGEdit, QString::number (rgb_.g_));
     setTextSilently (ui_->rgbBEdit, QString::number (rgb_.b_));
@@ -53,6 +53,15 @@ void MainWindow::updateEditionWidgets ()
     setTextSilently (ui_->labLEdit, QString::number (lab_.l_));
     setTextSilently (ui_->labAEdit, QString::number (lab_.a_));
     setTextSilently (ui_->labBEdit, QString::number (lab_.b_));
+
+    ui_->rgbLabel->setStyleSheet (rgb_.rounded_ ? "background:darkred;" : "");
+    ui_->rgbLabel->setToolTip (rgb_.rounded_ ? "Value rounded!" : "");
+
+    ui_->xyzLabel->setStyleSheet (xyz_.rounded_ ? "background:darkred;" : "");
+    ui_->xyzLabel->setToolTip (xyz_.rounded_ ? "Value rounded!" : "");
+
+    ui_->labLabel->setStyleSheet (lab_.rounded_ ? "background:darkred;" : "");
+    ui_->labLabel->setToolTip (lab_.rounded_ ? "Value rounded!" : "");
 }
 
 void MainWindow::on_rgbRSlider_valueChanged (int value)
@@ -75,20 +84,21 @@ void MainWindow::on_rgbBSlider_valueChanged (int value)
 
 void MainWindow::setSliderSilently (QSlider *slider, int value)
 {
-    slider->blockSignals(true);
+    slider->blockSignals (true);
     slider->setValue (value);
-    slider->blockSignals(false);
+    slider->blockSignals (false);
 }
 
 void MainWindow::setTextSilently (QLineEdit *lineEdit, const QString &value)
 {
-    lineEdit->blockSignals(true);
+    lineEdit->blockSignals (true);
     lineEdit->setText (value);
-    lineEdit->blockSignals(false);
+    lineEdit->blockSignals (false);
 }
 
 void MainWindow::afterRGBChange ()
 {
+    rgb_.rounded_ = false;
     xyz_ = XYZColor::fromRGB (rgb_);
     lab_ = LABColor::fromXYZ (xyz_);
 
@@ -98,6 +108,7 @@ void MainWindow::afterRGBChange ()
 
 void MainWindow::afterXYZChange ()
 {
+    xyz_.rounded_ = false;
     rgb_ = RGBColor::fromXYZ (xyz_);
     lab_ = LABColor::fromXYZ (xyz_);
 
@@ -107,6 +118,7 @@ void MainWindow::afterXYZChange ()
 
 void MainWindow::afterLABChange ()
 {
+    lab_.rounded_ = false;
     xyz_ = XYZColor::fromLAB (lab_);
     rgb_ = RGBColor::fromXYZ (xyz_);
 

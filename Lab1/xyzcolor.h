@@ -6,7 +6,7 @@ class XYZColor
 {
 public:
     XYZColor ();
-    XYZColor (float x, float y, float z, bool rounded);
+    XYZColor (float x, float y, float z);
 
     static XYZColor fromRGB(const RGBColor &rgb);
     static XYZColor fromLAB(const LABColor &lab);
