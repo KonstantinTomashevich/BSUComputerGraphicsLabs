@@ -37,6 +37,18 @@ private slots:
     void on_labASlider_valueChanged(int value);
     void on_labBSlider_valueChanged (int value);
 
+    void on_rgbREdit_returnPressed();
+    void on_rgbGEdit_returnPressed();
+    void on_rgbBEdit_returnPressed();
+
+    void on_xyzXEdit_returnPressed();
+    void on_xyzYEdit_returnPressed();
+    void on_xyzZEdit_returnPressed();
+
+    void on_labLEdit_returnPressed();
+    void on_labAEdit_returnPressed();
+    void on_labBEdit_returnPressed();
+
 private:
     void setSliderSilently (QSlider *slider, int value);
     void setTextSilently (QLineEdit *lineEdit, const QString &value);
@@ -47,6 +59,9 @@ private:
 
     void updateWidgetFromRGB ();
     void updateEditionWidgets ();
+
+    int getRGBComponentFromEdit(QLineEdit *edit);
+    float getXYZComponentFromEdit(QLineEdit *edit);
 
     Ui::MainWindow *ui_;
     RGBColor rgb_;

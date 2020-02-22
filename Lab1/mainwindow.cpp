@@ -1,7 +1,9 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+
 #include <QSlider>
 #include <QLineEdit>
+#include <QStyle>
 #include <cmath>
 
 MainWindow::MainWindow (QWidget *parent)
@@ -159,5 +161,102 @@ void MainWindow::on_labASlider_valueChanged (int value)
 void MainWindow::on_labBSlider_valueChanged (int value)
 {
     lab_.b_ = (short) value;
+    afterLABChange ();
+}
+
+void MainWindow::on_rgbREdit_returnPressed ()
+{
+    rgb_.r_ = getRGBComponentFromEdit (ui_->rgbREdit);
+    afterRGBChange ();
+}
+
+void MainWindow::on_rgbGEdit_returnPressed ()
+{
+    rgb_.g_ = getRGBComponentFromEdit (ui_->rgbGEdit);
+    afterRGBChange ();
+}
+
+void MainWindow::on_rgbBEdit_returnPressed ()
+{
+    rgb_.b_ = getRGBComponentFromEdit (ui_->rgbBEdit);
+    afterRGBChange ();
+}
+
+int MainWindow::getRGBComponentFromEdit (QLineEdit *edit)
+{
+    bool correct = true;
+    int component = edit->text ().toInt (&correct);
+
+    if (component > 255)
+    {
+        component = 255;
+    }
+
+    return correct ? component : 0;
+}
+
+void MainWindow::on_xyzXEdit_returnPressed ()
+{
+    xyz_ = XYZColor (getXYZComponentFromEdit (ui_->xyzXEdit), xyz_.y_, xyz_.z_);
+    xyz_.rounded_ = false;
+    afterXYZChange ();
+}
+
+void MainWindow::on_xyzYEdit_returnPressed ()
+{
+    xyz_ = XYZColor (xyz_.x_, getXYZComponentFromEdit (ui_->xyzYEdit), xyz_.z_);
+    xyz_.rounded_ = false;
+    afterXYZChange ();
+}
+
+void MainWindow::on_xyzZEdit_returnPressed ()
+{
+    xyz_ = XYZColor (xyz_.x_, xyz_.y_, getXYZComponentFromEdit (ui_->xyzZEdit));
+    xyz_.rounded_ = false;
+    afterXYZChange ();
+}
+
+float MainWindow::getXYZComponentFromEdit (QLineEdit *edit)
+{
+    bool correct = true;
+    float component = edit->text ().toFloat (&correct);
+    return correct ? component : 0.0f;
+}
+
+void MainWindow::on_labLEdit_returnPressed ()
+{
+    bool correct = true;
+    unsigned char l = ui_->labLEdit->text ().toUInt (&correct);
+
+    if (!correct) l = 0;
+    if (l > 100) l = 100;
+
+    lab_.l_ = l;
+    afterLABChange ();
+}
+
+void MainWindow::on_labAEdit_returnPressed ()
+{
+    bool correct = true;
+    short a = ui_->labAEdit->text ().toInt (&correct);
+
+    if (!correct) a = 0;
+    if (a > 128) a = 128;
+    if (a < -128) a = -128;
+
+    lab_.a_ = a;
+    afterLABChange ();
+}
+
+void MainWindow::on_labBEdit_returnPressed ()
+{
+    bool correct = true;
+    short b = ui_->labBEdit->text ().toInt (&correct);
+
+    if (!correct) b = 0;
+    if (b > 128) b = 128;
+    if (b < -128) b = -128;
+
+    lab_.b_ = b;
     afterLABChange ();
 }
