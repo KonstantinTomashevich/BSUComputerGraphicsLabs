@@ -160,10 +160,15 @@
        </widget>
       </item>
       <item row="0" column="2" rowspan="2" colspan="3">
-       <widget class="QFrame" name="palleteFrame">
+       <widget class="QFrame" name="paletteFrame">
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
         </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_13">
+         <item>
+          <layout class="QGridLayout" name="paletteLayout"/>
+         </item>
+        </layout>
        </widget>
       </item>
       <item row="0" column="1">

@@ -1,4 +1,6 @@
 #include "mainwindow.h"
+#include <cmath>
+#include <ctime>
 
 #include <QApplication>
 #include <QFile>
@@ -6,6 +8,7 @@
 
 int main(int argc, char *argv[])
 {
+    srand (time (nullptr));
     QApplication app(argc, argv);
     QFile stylesheetFile(":qdarkstyle/style.qss");
 

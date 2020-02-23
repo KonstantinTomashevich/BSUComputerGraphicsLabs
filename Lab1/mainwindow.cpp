@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "clickablelabel.h"
 
 #include <QSlider>
 #include <QLineEdit>
@@ -7,7 +8,7 @@
 #include <cmath>
 
 MainWindow::MainWindow (QWidget *parent)
-    : QMainWindow (parent), ui_ (new Ui::MainWindow)
+    : QMainWindow (parent), ui_ (new Ui::MainWindow), paletteColors_ ()
 {
     ui_->setupUi (this);
 
@@ -17,6 +18,7 @@ MainWindow::MainWindow (QWidget *parent)
 
     updateWidgetFromRGB ();
     updateEditionWidgets ();
+    generatePalette ();
 }
 
 MainWindow::~MainWindow ()
@@ -259,4 +261,30 @@ void MainWindow::on_labBEdit_returnPressed ()
 
     lab_.b_ = b;
     afterLABChange ();
+}
+
+void MainWindow::on_palette_clicked (ClickableLabel *sender)
+{
+    rgb_ = paletteColors_[sender];
+    afterRGBChange ();
+}
+
+void MainWindow::generatePalette ()
+{
+    for (int row = 0; row < 15; ++row)
+    {
+        for (int col = 0; col < 5; ++col)
+        {
+            auto *widget = new ClickableLabel (ui_->paletteFrame);
+            RGBColor color (rand () % 255, rand () % 255, rand () % 255);
+
+            widget->setStyleSheet (QString ("background-color:rgb(%1, %2, %3);").
+                arg (color.r_).arg (color.g_).arg (color.b_));
+            widget->setAutoFillBackground (true);
+
+            paletteColors_[widget] = color;
+            ui_->paletteLayout->addWidget (widget, row, col, 1, 1);
+            connect (widget, &ClickableLabel::clicked, this, &MainWindow::on_palette_clicked);
+        }
+    }
 }

@@ -37,7 +37,11 @@ set(SOURCES
         xyzcolor.cpp
         xyzcolor.h
         labcolor.cpp
-        labcolor.h utils.cpp utils.h)
+        labcolor.h
+        utils.cpp
+        utils.h
+        clickablelabel.cpp
+        clickablelabel.h)
 
 if (ANDROID)
     add_library(Lab1 SHARED ${SOURCES})
