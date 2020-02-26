@@ -46,7 +46,8 @@ set(SOURCES
 if (ANDROID)
     add_library(Lab1 SHARED ${SOURCES})
 else ()
-    add_executable(Lab1 ${SOURCES})
+    link_libraries(${QT_QTMAIN_LIBRARY})
+    add_executable(Lab1 WIN32 ${SOURCES})
 endif ()
 
 target_link_libraries(Lab1 PRIVATE Qt5::Widgets)
