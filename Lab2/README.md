@@ -32,9 +32,9 @@
 ![Screenshot 4](ReadmeScreenshots/4.png)
 
 * Размер изображения в пикселях -- `GIF/Image Height` и `GIF/Image Width`.
-* Разрешение -- отсутствует.
+* Разрешение -- `Metadata Extractor` не обнаружил данные о разрешении.
 * Глубина цвета -- `GIF/Color Table Size` (количество цветов в таблице) и `GIF/Bits Per Pixel` (количество битов на один пиксель).
-* Сжатие -- отсутствует.
+* Сжатие -- `Metadata Extractor` не обнаружил данных о сжатии.
 
 ### TIF
 
@@ -50,7 +50,7 @@
 ![Screenshot 6](ReadmeScreenshots/6.png)
 
 * Размер изображения в пикселях -- `BMP Header/Image Height` и `BMP Header/Image Width`.
-* Разрешение -- отсутствует.
+* Разрешение -- `Metadata Extractor` не обнаружил данные о разрешении.
 * Глубина цвета -- `BMP Header/Bits Per Pixel`, `BMP Header/Palette Colour Count`, `BMP Header/Important Palette Colour Count`.
 * Сжатие -- `BMP Header/Compression`.
 
@@ -70,4 +70,4 @@
 * Размер изображения в пикселях -- `PCX/X Min` и `PCX/X Max`, `PCX/Y Min` и `PCX/Y Max`.
 * Разрешение -- `PCX/Horizontal DPI`, `PCX/Vertical DPI`.
 * Глубина цвета -- `PCX/Bits Per Pixel`, `PCX/Color Planes`, `PCX/Palette`.
-* Сжатие -- библиотека не смогла определить тип сжатия.
+* Сжатие -- `Metadata Extractor` не смог определить тип сжатия.
