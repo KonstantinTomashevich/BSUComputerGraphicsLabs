@@ -28,6 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.windowLayout = new System.Windows.Forms.TableLayoutPanel();
             this.pictureView = new System.Windows.Forms.PictureBox();
             this.menuPanel = new System.Windows.Forms.Panel();
@@ -58,19 +64,22 @@
             this.powerInput = new System.Windows.Forms.NumericUpDown();
             this.powerAlphaCheck = new System.Windows.Forms.CheckBox();
             this.powerButton = new System.Windows.Forms.Button();
-            this.openImageDialog = new System.Windows.Forms.OpenFileDialog();
-            this.saveImageDialog = new System.Windows.Forms.SaveFileDialog();
             this.logLabel = new System.Windows.Forms.Label();
             this.logAlphaCheck = new System.Windows.Forms.CheckBox();
             this.logButton = new System.Windows.Forms.Button();
             this.linearContrastLabel = new System.Windows.Forms.Label();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
-            this.contrastMinInput = new System.Windows.Forms.NumericUpDown();
-            this.contrastMaxInput = new System.Windows.Forms.NumericUpDown();
             this.contrastMinLabel = new System.Windows.Forms.Label();
+            this.contrastMinInput = new System.Windows.Forms.NumericUpDown();
             this.contrastMaxLabel = new System.Windows.Forms.Label();
-            this.linearContrastButton = new System.Windows.Forms.Button();
+            this.contrastMaxInput = new System.Windows.Forms.NumericUpDown();
             this.linearContrastAlphaCheck = new System.Windows.Forms.CheckBox();
+            this.linearContrastButton = new System.Windows.Forms.Button();
+            this.openImageDialog = new System.Windows.Forms.OpenFileDialog();
+            this.saveImageDialog = new System.Windows.Forms.SaveFileDialog();
+            this.rgbHistogramLabel = new System.Windows.Forms.Label();
+            this.rgbHistogramChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.separateEqualizeButton = new System.Windows.Forms.Button();
             this.windowLayout.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureView)).BeginInit();
             this.menuPanel.SuspendLayout();
@@ -91,6 +100,7 @@
             this.flowLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.contrastMinInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.contrastMaxInput)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.rgbHistogramChart)).BeginInit();
             this.SuspendLayout();
             // 
             // windowLayout
@@ -107,7 +117,7 @@
             this.windowLayout.RowCount = 2;
             this.windowLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.windowLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.windowLayout.Size = new System.Drawing.Size(800, 659);
+            this.windowLayout.Size = new System.Drawing.Size(930, 666);
             this.windowLayout.TabIndex = 0;
             // 
             // pictureView
@@ -115,7 +125,7 @@
             this.pictureView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureView.Location = new System.Drawing.Point(3, 49);
             this.pictureView.Name = "pictureView";
-            this.pictureView.Size = new System.Drawing.Size(436, 607);
+            this.pictureView.Size = new System.Drawing.Size(566, 614);
             this.pictureView.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureView.TabIndex = 0;
             this.pictureView.TabStop = false;
@@ -129,7 +139,7 @@
             this.menuPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.menuPanel.Location = new System.Drawing.Point(3, 3);
             this.menuPanel.Name = "menuPanel";
-            this.menuPanel.Size = new System.Drawing.Size(794, 40);
+            this.menuPanel.Size = new System.Drawing.Size(924, 40);
             this.menuPanel.TabIndex = 1;
             // 
             // menuPanelLayout
@@ -141,7 +151,7 @@
             this.menuPanelLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.menuPanelLayout.Location = new System.Drawing.Point(0, 0);
             this.menuPanelLayout.Name = "menuPanelLayout";
-            this.menuPanelLayout.Size = new System.Drawing.Size(794, 40);
+            this.menuPanelLayout.Size = new System.Drawing.Size(924, 40);
             this.menuPanelLayout.TabIndex = 0;
             // 
             // openButton
@@ -176,6 +186,7 @@
             // 
             this.modificatorsPanel.AutoScroll = true;
             this.modificatorsPanel.AutoSize = true;
+            this.modificatorsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.modificatorsPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.modificatorsPanel.Controls.Add(this.addLabel);
             this.modificatorsPanel.Controls.Add(this.colorPanel);
@@ -197,11 +208,14 @@
             this.modificatorsPanel.Controls.Add(this.flowLayoutPanel2);
             this.modificatorsPanel.Controls.Add(this.linearContrastAlphaCheck);
             this.modificatorsPanel.Controls.Add(this.linearContrastButton);
+            this.modificatorsPanel.Controls.Add(this.rgbHistogramLabel);
+            this.modificatorsPanel.Controls.Add(this.rgbHistogramChart);
+            this.modificatorsPanel.Controls.Add(this.separateEqualizeButton);
             this.modificatorsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.modificatorsPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.modificatorsPanel.Location = new System.Drawing.Point(445, 49);
+            this.modificatorsPanel.Location = new System.Drawing.Point(575, 49);
             this.modificatorsPanel.Name = "modificatorsPanel";
-            this.modificatorsPanel.Size = new System.Drawing.Size(352, 607);
+            this.modificatorsPanel.Size = new System.Drawing.Size(352, 614);
             this.modificatorsPanel.TabIndex = 2;
             this.modificatorsPanel.WrapContents = false;
             // 
@@ -581,16 +595,6 @@
             this.powerButton.UseVisualStyleBackColor = false;
             this.powerButton.Click += new System.EventHandler(this.powerButton_Click);
             // 
-            // openImageDialog
-            // 
-            this.openImageDialog.Filter = "PNG|*.png|JPEG|.jpg|BMP|*.bmp|TIFF|*.tiff|All files|*.*";
-            this.openImageDialog.Title = "Select image to edit...";
-            // 
-            // saveImageDialog
-            // 
-            this.saveImageDialog.DefaultExt = "png";
-            this.saveImageDialog.Filter = "PNG|*.png|JPEG|.jpg|BMP|*.bmp|TIFF|*.tiff|All files|*.*";
-            // 
             // logLabel
             // 
             this.logLabel.AutoSize = true;
@@ -655,41 +659,6 @@
             this.flowLayoutPanel2.TabIndex = 19;
             this.flowLayoutPanel2.WrapContents = false;
             // 
-            // contrastMinInput
-            // 
-            this.contrastMinInput.AutoSize = true;
-            this.contrastMinInput.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
-            this.contrastMinInput.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
-            this.contrastMinInput.Location = new System.Drawing.Point(43, 3);
-            this.contrastMinInput.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            this.contrastMinInput.Name = "contrastMinInput";
-            this.contrastMinInput.Size = new System.Drawing.Size(64, 22);
-            this.contrastMinInput.TabIndex = 0;
-            // 
-            // contrastMaxInput
-            // 
-            this.contrastMaxInput.AutoSize = true;
-            this.contrastMaxInput.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
-            this.contrastMaxInput.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
-            this.contrastMaxInput.Location = new System.Drawing.Point(156, 3);
-            this.contrastMaxInput.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            this.contrastMaxInput.Name = "contrastMaxInput";
-            this.contrastMaxInput.Size = new System.Drawing.Size(64, 22);
-            this.contrastMaxInput.TabIndex = 3;
-            this.contrastMaxInput.Value = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            // 
             // contrastMinLabel
             // 
             this.contrastMinLabel.AutoSize = true;
@@ -703,18 +672,64 @@
             this.contrastMinLabel.Text = "Min:";
             this.contrastMinLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // contrastMinInput
+            // 
+            this.contrastMinInput.AutoSize = true;
+            this.contrastMinInput.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
+            this.contrastMinInput.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.contrastMinInput.Location = new System.Drawing.Point(43, 3);
+            this.contrastMinInput.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.contrastMinInput.Name = "contrastMinInput";
+            this.contrastMinInput.Size = new System.Drawing.Size(52, 22);
+            this.contrastMinInput.TabIndex = 0;
+            // 
             // contrastMaxLabel
             // 
             this.contrastMaxLabel.AutoSize = true;
             this.contrastMaxLabel.Dock = System.Windows.Forms.DockStyle.Left;
             this.contrastMaxLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.contrastMaxLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
-            this.contrastMaxLabel.Location = new System.Drawing.Point(113, 0);
+            this.contrastMaxLabel.Location = new System.Drawing.Point(101, 0);
             this.contrastMaxLabel.Name = "contrastMaxLabel";
             this.contrastMaxLabel.Size = new System.Drawing.Size(37, 28);
             this.contrastMaxLabel.TabIndex = 17;
             this.contrastMaxLabel.Text = "Max:";
             this.contrastMaxLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // contrastMaxInput
+            // 
+            this.contrastMaxInput.AutoSize = true;
+            this.contrastMaxInput.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
+            this.contrastMaxInput.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.contrastMaxInput.Location = new System.Drawing.Point(144, 3);
+            this.contrastMaxInput.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.contrastMaxInput.Name = "contrastMaxInput";
+            this.contrastMaxInput.Size = new System.Drawing.Size(52, 22);
+            this.contrastMaxInput.TabIndex = 3;
+            this.contrastMaxInput.Value = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            // 
+            // linearContrastAlphaCheck
+            // 
+            this.linearContrastAlphaCheck.AutoSize = true;
+            this.linearContrastAlphaCheck.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.linearContrastAlphaCheck.Location = new System.Drawing.Point(3, 518);
+            this.linearContrastAlphaCheck.Name = "linearContrastAlphaCheck";
+            this.linearContrastAlphaCheck.Size = new System.Drawing.Size(113, 21);
+            this.linearContrastAlphaCheck.TabIndex = 21;
+            this.linearContrastAlphaCheck.Text = "Affect alpha?";
+            this.linearContrastAlphaCheck.UseVisualStyleBackColor = true;
             // 
             // linearContrastButton
             // 
@@ -732,23 +747,82 @@
             this.linearContrastButton.UseVisualStyleBackColor = false;
             this.linearContrastButton.Click += new System.EventHandler(this.linearContrastButton_Click);
             // 
-            // linearContrastAlphaCheck
+            // openImageDialog
             // 
-            this.linearContrastAlphaCheck.AutoSize = true;
-            this.linearContrastAlphaCheck.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
-            this.linearContrastAlphaCheck.Location = new System.Drawing.Point(3, 518);
-            this.linearContrastAlphaCheck.Name = "linearContrastAlphaCheck";
-            this.linearContrastAlphaCheck.Size = new System.Drawing.Size(113, 21);
-            this.linearContrastAlphaCheck.TabIndex = 21;
-            this.linearContrastAlphaCheck.Text = "Affect alpha?";
-            this.linearContrastAlphaCheck.UseVisualStyleBackColor = true;
+            this.openImageDialog.Filter = "PNG|*.png|JPEG|.jpg|BMP|*.bmp|TIFF|*.tiff|All files|*.*";
+            this.openImageDialog.Title = "Select image to edit...";
+            // 
+            // saveImageDialog
+            // 
+            this.saveImageDialog.DefaultExt = "png";
+            this.saveImageDialog.Filter = "PNG|*.png|JPEG|.jpg|BMP|*.bmp|TIFF|*.tiff|All files|*.*";
+            // 
+            // rgbHistogramLabel
+            // 
+            this.rgbHistogramLabel.AutoSize = true;
+            this.rgbHistogramLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.rgbHistogramLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.rgbHistogramLabel.Location = new System.Drawing.Point(3, 577);
+            this.rgbHistogramLabel.Name = "rgbHistogramLabel";
+            this.rgbHistogramLabel.Size = new System.Drawing.Size(129, 20);
+            this.rgbHistogramLabel.TabIndex = 22;
+            this.rgbHistogramLabel.Text = "RGB Histogram";
+            // 
+            // rgbHistogramChart
+            // 
+            this.rgbHistogramChart.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
+            chartArea4.BackColor = System.Drawing.Color.White;
+            chartArea4.Name = "RArea";
+            chartArea5.Name = "BArea";
+            chartArea6.Name = "GArea";
+            this.rgbHistogramChart.ChartAreas.Add(chartArea4);
+            this.rgbHistogramChart.ChartAreas.Add(chartArea5);
+            this.rgbHistogramChart.ChartAreas.Add(chartArea6);
+            this.rgbHistogramChart.Dock = System.Windows.Forms.DockStyle.Top;
+            this.rgbHistogramChart.Location = new System.Drawing.Point(3, 600);
+            this.rgbHistogramChart.Name = "rgbHistogramChart";
+            this.rgbHistogramChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None;
+            this.rgbHistogramChart.PaletteCustomColors = new System.Drawing.Color[] {
+        System.Drawing.Color.Red,
+        System.Drawing.Color.Lime,
+        System.Drawing.Color.Blue};
+            series4.ChartArea = "RArea";
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Area;
+            series4.Name = "Series1";
+            series5.ChartArea = "BArea";
+            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Area;
+            series5.Name = "Series2";
+            series6.ChartArea = "GArea";
+            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Area;
+            series6.Name = "Series3";
+            this.rgbHistogramChart.Series.Add(series4);
+            this.rgbHistogramChart.Series.Add(series5);
+            this.rgbHistogramChart.Series.Add(series6);
+            this.rgbHistogramChart.Size = new System.Drawing.Size(344, 500);
+            this.rgbHistogramChart.TabIndex = 23;
+            // 
+            // separateEqualizeButton
+            // 
+            this.separateEqualizeButton.AutoSize = true;
+            this.separateEqualizeButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.separateEqualizeButton.Dock = System.Windows.Forms.DockStyle.Top;
+            this.separateEqualizeButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.separateEqualizeButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.separateEqualizeButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.separateEqualizeButton.Location = new System.Drawing.Point(3, 1106);
+            this.separateEqualizeButton.Name = "separateEqualizeButton";
+            this.separateEqualizeButton.Size = new System.Drawing.Size(344, 29);
+            this.separateEqualizeButton.TabIndex = 24;
+            this.separateEqualizeButton.Text = "Equalize Components Separately";
+            this.separateEqualizeButton.UseVisualStyleBackColor = false;
+            this.separateEqualizeButton.Click += new System.EventHandler(this.separateEqualizeButton_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
-            this.ClientSize = new System.Drawing.Size(800, 659);
+            this.ClientSize = new System.Drawing.Size(930, 666);
             this.Controls.Add(this.windowLayout);
             this.Name = "MainForm";
             this.Text = "Konstantin Tomashevich CG Lab 3";
@@ -780,6 +854,7 @@
             this.flowLayoutPanel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.contrastMinInput)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.contrastMaxInput)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.rgbHistogramChart)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -829,6 +904,9 @@
         private System.Windows.Forms.NumericUpDown contrastMaxInput;
         private System.Windows.Forms.Button linearContrastButton;
         private System.Windows.Forms.CheckBox linearContrastAlphaCheck;
+        private System.Windows.Forms.Label rgbHistogramLabel;
+        private System.Windows.Forms.DataVisualization.Charting.Chart rgbHistogramChart;
+        private System.Windows.Forms.Button separateEqualizeButton;
     }
 }
 

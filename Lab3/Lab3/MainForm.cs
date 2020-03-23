@@ -13,10 +13,12 @@ namespace Lab3
     public partial class MainForm : Form
     {
         private Bitmap selectedBitmap = null;
+        private int[][] rgbHistogram = null;
 
         public MainForm()
         {
             InitializeComponent();
+            modificatorsPanel.HorizontalScroll.Visible = false;
         }
 
         private void openButton_Click(object sender, EventArgs e)
@@ -28,6 +30,7 @@ namespace Lab3
                 {
                     Bitmap newBitmap = new Bitmap(openImageDialog.FileName);
                     selectedBitmap = newBitmap;
+                    OnImageUpdated();
                     pictureView.Image = selectedBitmap;
                 }
                 catch (Exception exception)
@@ -83,7 +86,7 @@ namespace Lab3
             {
                 PerElementModificators.Add(selectedBitmap, (int)colorAInput.Value,
                     (int)colorRInput.Value, (int)colorGInput.Value, (int)colorBInput.Value);
-                pictureView.Invalidate();
+                OnImageUpdated();
             }
         }
 
@@ -93,7 +96,7 @@ namespace Lab3
             {
                 PerElementModificators.Add(selectedBitmap, -(int)colorAInput.Value,
                     -(int)colorRInput.Value, -(int)colorGInput.Value, -(int)colorBInput.Value);
-                pictureView.Invalidate();
+                OnImageUpdated();
             }
         }
 
@@ -102,7 +105,7 @@ namespace Lab3
             if (RequireBitmap())
             {
                 PerElementModificators.Negate(selectedBitmap, negateAlphaCheck.Checked);
-                pictureView.Invalidate();
+                OnImageUpdated();
             }
         }
 
@@ -113,7 +116,7 @@ namespace Lab3
                 PerElementModificators.Multiply(selectedBitmap,
                     (float)colorAMultiplierInput.Value, (float)colorRMultiplierInput.Value,
                     (float)colorGMultiplierInput.Value, (float)colorBMultiplierInput.Value);
-                pictureView.Invalidate();
+                OnImageUpdated();
             }
         }
 
@@ -123,7 +126,7 @@ namespace Lab3
             {
                 PerElementModificators.Power(selectedBitmap,
                     (float)powerInput.Value, powerAlphaCheck.Checked);
-                pictureView.Invalidate();
+                OnImageUpdated();
             }
         }
 
@@ -132,7 +135,7 @@ namespace Lab3
             if (RequireBitmap())
             {
                 PerElementModificators.Log(selectedBitmap, logAlphaCheck.Checked);
-                pictureView.Invalidate();
+                OnImageUpdated();
             }
         }
 
@@ -147,12 +150,40 @@ namespace Lab3
                     return;
                 }
 
-                pictureView.Image = null;
                 PerElementModificators.LinearContrast(selectedBitmap, linearContrastAlphaCheck.Checked,
                     (int)contrastMinInput.Value, (int)contrastMaxInput.Value);
+                OnImageUpdated();
+            }
+        }
 
-                pictureView.Image = selectedBitmap;
-                pictureView.Invalidate();
+        private void OnImageUpdated()
+        {
+            rgbHistogram = HistogramModificators.CalculateRGBHistogram(selectedBitmap);
+            for (int component = 0; component < 3; ++component)
+            {
+                rgbHistogramChart.Series[component].Points.Clear();
+                for (int index = 0; index < 255; ++index)
+                {
+                    rgbHistogramChart.Series[component].Points.AddXY(index, rgbHistogram[component][index]);
+                }
+            }
+
+            pictureView.Invalidate();
+        }
+
+        private void separateEqualizeButton_Click(object sender, EventArgs e)
+        {
+            if (RequireBitmap())
+            {
+                if (contrastMinInput.Value >= contrastMaxInput.Value)
+                {
+                    MessageBox.Show("Contrast min value must be less than max!", "Unable to apply modifier!",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                HistogramModificators.EqualizeRGBComponentsSeparately(selectedBitmap, rgbHistogram);
+                OnImageUpdated();
             }
         }
     }
