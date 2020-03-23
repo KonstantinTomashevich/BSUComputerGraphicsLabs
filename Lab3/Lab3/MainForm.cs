@@ -14,6 +14,7 @@ namespace Lab3
     {
         private Bitmap selectedBitmap = null;
         private int[][] rgbHistogram = null;
+        private int[] brightnessHistogram = null;
 
         public MainForm()
         {
@@ -162,10 +163,18 @@ namespace Lab3
             for (int component = 0; component < 3; ++component)
             {
                 rgbHistogramChart.Series[component].Points.Clear();
-                for (int index = 0; index < 255; ++index)
+                for (int index = 0; index < rgbHistogram[component].Length; ++index)
                 {
                     rgbHistogramChart.Series[component].Points.AddXY(index, rgbHistogram[component][index]);
                 }
+            }
+
+            brightnessHistogram = HistogramModificators.CalculateBrightnessHistogram(selectedBitmap);
+            brightnessHistogramChart.Series[0].Points.Clear();
+
+            for (int index = 0; index < brightnessHistogram.Length; ++index)
+            {
+                brightnessHistogramChart.Series[0].Points.AddXY(index, brightnessHistogram[index]);
             }
 
             pictureView.Invalidate();
@@ -183,6 +192,22 @@ namespace Lab3
                 }
 
                 HistogramModificators.EqualizeRGBComponentsSeparately(selectedBitmap, rgbHistogram);
+                OnImageUpdated();
+            }
+        }
+
+        private void equalizeBrightnessButton_Click(object sender, EventArgs e)
+        {
+            if (RequireBitmap())
+            {
+                if (contrastMinInput.Value >= contrastMaxInput.Value)
+                {
+                    MessageBox.Show("Contrast min value must be less than max!", "Unable to apply modifier!",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                HistogramModificators.EqualizeHSVBrightness(selectedBitmap, brightnessHistogram);
                 OnImageUpdated();
             }
         }

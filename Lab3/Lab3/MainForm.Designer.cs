@@ -28,12 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.windowLayout = new System.Windows.Forms.TableLayoutPanel();
             this.pictureView = new System.Windows.Forms.PictureBox();
             this.menuPanel = new System.Windows.Forms.Panel();
@@ -75,11 +77,14 @@
             this.contrastMaxInput = new System.Windows.Forms.NumericUpDown();
             this.linearContrastAlphaCheck = new System.Windows.Forms.CheckBox();
             this.linearContrastButton = new System.Windows.Forms.Button();
-            this.openImageDialog = new System.Windows.Forms.OpenFileDialog();
-            this.saveImageDialog = new System.Windows.Forms.SaveFileDialog();
             this.rgbHistogramLabel = new System.Windows.Forms.Label();
             this.rgbHistogramChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.separateEqualizeButton = new System.Windows.Forms.Button();
+            this.brightnessHistogramLabel = new System.Windows.Forms.Label();
+            this.brightnessHistogramChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.equalizeLightnessButton = new System.Windows.Forms.Button();
+            this.openImageDialog = new System.Windows.Forms.OpenFileDialog();
+            this.saveImageDialog = new System.Windows.Forms.SaveFileDialog();
             this.windowLayout.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureView)).BeginInit();
             this.menuPanel.SuspendLayout();
@@ -101,6 +106,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.contrastMinInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.contrastMaxInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.rgbHistogramChart)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.brightnessHistogramChart)).BeginInit();
             this.SuspendLayout();
             // 
             // windowLayout
@@ -211,6 +217,9 @@
             this.modificatorsPanel.Controls.Add(this.rgbHistogramLabel);
             this.modificatorsPanel.Controls.Add(this.rgbHistogramChart);
             this.modificatorsPanel.Controls.Add(this.separateEqualizeButton);
+            this.modificatorsPanel.Controls.Add(this.brightnessHistogramLabel);
+            this.modificatorsPanel.Controls.Add(this.brightnessHistogramChart);
+            this.modificatorsPanel.Controls.Add(this.equalizeLightnessButton);
             this.modificatorsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.modificatorsPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.modificatorsPanel.Location = new System.Drawing.Point(575, 49);
@@ -747,16 +756,6 @@
             this.linearContrastButton.UseVisualStyleBackColor = false;
             this.linearContrastButton.Click += new System.EventHandler(this.linearContrastButton_Click);
             // 
-            // openImageDialog
-            // 
-            this.openImageDialog.Filter = "PNG|*.png|JPEG|.jpg|BMP|*.bmp|TIFF|*.tiff|All files|*.*";
-            this.openImageDialog.Title = "Select image to edit...";
-            // 
-            // saveImageDialog
-            // 
-            this.saveImageDialog.DefaultExt = "png";
-            this.saveImageDialog.Filter = "PNG|*.png|JPEG|.jpg|BMP|*.bmp|TIFF|*.tiff|All files|*.*";
-            // 
             // rgbHistogramLabel
             // 
             this.rgbHistogramLabel.AutoSize = true;
@@ -771,13 +770,13 @@
             // rgbHistogramChart
             // 
             this.rgbHistogramChart.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
-            chartArea4.BackColor = System.Drawing.Color.White;
-            chartArea4.Name = "RArea";
-            chartArea5.Name = "BArea";
-            chartArea6.Name = "GArea";
-            this.rgbHistogramChart.ChartAreas.Add(chartArea4);
-            this.rgbHistogramChart.ChartAreas.Add(chartArea5);
-            this.rgbHistogramChart.ChartAreas.Add(chartArea6);
+            chartArea1.BackColor = System.Drawing.Color.White;
+            chartArea1.Name = "RArea";
+            chartArea2.Name = "BArea";
+            chartArea3.Name = "GArea";
+            this.rgbHistogramChart.ChartAreas.Add(chartArea1);
+            this.rgbHistogramChart.ChartAreas.Add(chartArea2);
+            this.rgbHistogramChart.ChartAreas.Add(chartArea3);
             this.rgbHistogramChart.Dock = System.Windows.Forms.DockStyle.Top;
             this.rgbHistogramChart.Location = new System.Drawing.Point(3, 600);
             this.rgbHistogramChart.Name = "rgbHistogramChart";
@@ -786,18 +785,18 @@
         System.Drawing.Color.Red,
         System.Drawing.Color.Lime,
         System.Drawing.Color.Blue};
-            series4.ChartArea = "RArea";
-            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Area;
-            series4.Name = "Series1";
-            series5.ChartArea = "BArea";
-            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Area;
-            series5.Name = "Series2";
-            series6.ChartArea = "GArea";
-            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Area;
-            series6.Name = "Series3";
-            this.rgbHistogramChart.Series.Add(series4);
-            this.rgbHistogramChart.Series.Add(series5);
-            this.rgbHistogramChart.Series.Add(series6);
+            series1.ChartArea = "RArea";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Area;
+            series1.Name = "Series1";
+            series2.ChartArea = "BArea";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Area;
+            series2.Name = "Series2";
+            series3.ChartArea = "GArea";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Area;
+            series3.Name = "Series3";
+            this.rgbHistogramChart.Series.Add(series1);
+            this.rgbHistogramChart.Series.Add(series2);
+            this.rgbHistogramChart.Series.Add(series3);
             this.rgbHistogramChart.Size = new System.Drawing.Size(344, 500);
             this.rgbHistogramChart.TabIndex = 23;
             // 
@@ -816,6 +815,62 @@
             this.separateEqualizeButton.Text = "Equalize Components Separately";
             this.separateEqualizeButton.UseVisualStyleBackColor = false;
             this.separateEqualizeButton.Click += new System.EventHandler(this.separateEqualizeButton_Click);
+            // 
+            // brightnessHistogramLabel
+            // 
+            this.brightnessHistogramLabel.AutoSize = true;
+            this.brightnessHistogramLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.brightnessHistogramLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.brightnessHistogramLabel.Location = new System.Drawing.Point(3, 1138);
+            this.brightnessHistogramLabel.Name = "brightnessHistogramLabel";
+            this.brightnessHistogramLabel.Size = new System.Drawing.Size(213, 20);
+            this.brightnessHistogramLabel.TabIndex = 25;
+            this.brightnessHistogramLabel.Text = "HSV Brightness Histogram";
+            // 
+            // brightnessHistogramChart
+            // 
+            this.brightnessHistogramChart.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
+            chartArea4.BackColor = System.Drawing.Color.White;
+            chartArea4.Name = "BrightnessArea";
+            this.brightnessHistogramChart.ChartAreas.Add(chartArea4);
+            this.brightnessHistogramChart.Dock = System.Windows.Forms.DockStyle.Top;
+            this.brightnessHistogramChart.Location = new System.Drawing.Point(3, 1161);
+            this.brightnessHistogramChart.Name = "brightnessHistogramChart";
+            this.brightnessHistogramChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None;
+            this.brightnessHistogramChart.PaletteCustomColors = new System.Drawing.Color[] {
+        System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(213)))), ((int)(((byte)(0)))))};
+            series4.ChartArea = "BrightnessArea";
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Area;
+            series4.Name = "Series1";
+            this.brightnessHistogramChart.Series.Add(series4);
+            this.brightnessHistogramChart.Size = new System.Drawing.Size(344, 170);
+            this.brightnessHistogramChart.TabIndex = 26;
+            // 
+            // equalizeLightnessButton
+            // 
+            this.equalizeLightnessButton.AutoSize = true;
+            this.equalizeLightnessButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.equalizeLightnessButton.Dock = System.Windows.Forms.DockStyle.Top;
+            this.equalizeLightnessButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.equalizeLightnessButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.equalizeLightnessButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.equalizeLightnessButton.Location = new System.Drawing.Point(3, 1337);
+            this.equalizeLightnessButton.Name = "equalizeLightnessButton";
+            this.equalizeLightnessButton.Size = new System.Drawing.Size(344, 29);
+            this.equalizeLightnessButton.TabIndex = 27;
+            this.equalizeLightnessButton.Text = "Equalize Brightness";
+            this.equalizeLightnessButton.UseVisualStyleBackColor = false;
+            this.equalizeLightnessButton.Click += new System.EventHandler(this.equalizeBrightnessButton_Click);
+            // 
+            // openImageDialog
+            // 
+            this.openImageDialog.Filter = "PNG|*.png|JPEG|.jpg|BMP|*.bmp|TIFF|*.tiff|All files|*.*";
+            this.openImageDialog.Title = "Select image to edit...";
+            // 
+            // saveImageDialog
+            // 
+            this.saveImageDialog.DefaultExt = "png";
+            this.saveImageDialog.Filter = "PNG|*.png|JPEG|.jpg|BMP|*.bmp|TIFF|*.tiff|All files|*.*";
             // 
             // MainForm
             // 
@@ -855,6 +910,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.contrastMinInput)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.contrastMaxInput)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.rgbHistogramChart)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.brightnessHistogramChart)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -907,6 +963,9 @@
         private System.Windows.Forms.Label rgbHistogramLabel;
         private System.Windows.Forms.DataVisualization.Charting.Chart rgbHistogramChart;
         private System.Windows.Forms.Button separateEqualizeButton;
+        private System.Windows.Forms.Label brightnessHistogramLabel;
+        private System.Windows.Forms.DataVisualization.Charting.Chart brightnessHistogramChart;
+        private System.Windows.Forms.Button equalizeLightnessButton;
     }
 }
 
