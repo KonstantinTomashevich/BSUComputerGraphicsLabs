@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,18 +12,26 @@ namespace Lab3
     {
         public static void Add(Bitmap bitmap, int deltaA, int deltaR, int deltaG, int deltaB)
         {
-            for (int w = 0; w < bitmap.Width; ++w)
+            BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), 
+                ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+
+            unsafe
             {
-                for (int h = 0; h < bitmap.Height; ++h)
+                byte* components = (byte*)data.Scan0;
+                for (int w = 0; w < bitmap.Width; ++w)
                 {
-                    Color source = bitmap.GetPixel(w, h);
-                    bitmap.SetPixel(w, h, Color.FromArgb(
-                        ClampColorComponent((int)source.A + (int)deltaA),
-                        ClampColorComponent((int)source.R + (int)deltaR),
-                        ClampColorComponent((int)source.G + (int)deltaG),
-                        ClampColorComponent((int)source.B + (int)deltaB)));
+                    for (int h = 0; h < bitmap.Height; ++h)
+                    {
+                        int startIndex = w * 4 + h * data.Stride;
+                        components[startIndex] = (byte)ClampColorComponent((int)components[startIndex] + (int)deltaB);
+                        components[startIndex + 1] = (byte)ClampColorComponent((int)components[startIndex + 1] + (int)deltaG);
+                        components[startIndex + 2] = (byte)ClampColorComponent((int)components[startIndex + 2] + (int)deltaR);
+                        components[startIndex + 3] = (byte)ClampColorComponent((int)components[startIndex + 3] + (int)deltaA);
+                    }
                 }
             }
+
+            bitmap.UnlockBits(data);
         }
 
         private static int ClampColorComponent(int value, int min = 0, int max = 255)
@@ -32,18 +41,26 @@ namespace Lab3
 
         public static void Negate(Bitmap bitmap, bool negateAlpha = false)
         {
-            for (int w = 0; w < bitmap.Width; ++w)
+            BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),
+                ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+
+            unsafe
             {
-                for (int h = 0; h < bitmap.Height; ++h)
+                byte* components = (byte*)data.Scan0;
+                for (int w = 0; w < bitmap.Width; ++w)
                 {
-                    Color source = bitmap.GetPixel(w, h);
-                    bitmap.SetPixel(w, h, Color.FromArgb(
-                        negateAlpha ? NegateComponent(source.A) : source.A,
-                        NegateComponent(source.R),
-                        NegateComponent(source.G),
-                        NegateComponent(source.B)));
+                    for (int h = 0; h < bitmap.Height; ++h)
+                    {
+                        int startIndex = w * 4 + h * data.Stride;
+                        for (int index = 0; index < (negateAlpha ? 4 : 3); ++index)
+                        {
+                            components[startIndex + index] = (byte)NegateComponent(components[startIndex + index]);
+                        }
+                    }
                 }
             }
+
+            bitmap.UnlockBits(data);
         }
 
         private static int NegateComponent(int component)
@@ -54,18 +71,26 @@ namespace Lab3
         public static void Multiply(Bitmap bitmap,
             float aMultiplier, float rMultiplier, float gMultiplier, float bMultiplier)
         {
-            for (int w = 0; w < bitmap.Width; ++w)
+            BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),
+                ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+
+            unsafe
             {
-                for (int h = 0; h < bitmap.Height; ++h)
+                byte* components = (byte*)data.Scan0;
+                for (int w = 0; w < bitmap.Width; ++w)
                 {
-                    Color source = bitmap.GetPixel(w, h);
-                    bitmap.SetPixel(w, h, Color.FromArgb(
-                        MultiplyComponent(source.A, aMultiplier),
-                        MultiplyComponent(source.R, rMultiplier),
-                        MultiplyComponent(source.G, gMultiplier),
-                        MultiplyComponent(source.B, bMultiplier)));
+                    for (int h = 0; h < bitmap.Height; ++h)
+                    {
+                        int startIndex = w * 4 + h * data.Stride;
+                        components[startIndex] = (byte)MultiplyComponent((int)components[startIndex], bMultiplier);
+                        components[startIndex + 1] = (byte)MultiplyComponent((int)components[startIndex + 1], gMultiplier);
+                        components[startIndex + 2] = (byte)MultiplyComponent((int)components[startIndex + 2], rMultiplier);
+                        components[startIndex + 3] = (byte)MultiplyComponent((int)components[startIndex + 3], aMultiplier);
+                    }
                 }
             }
+
+            bitmap.UnlockBits(data);
         }
 
         private static int MultiplyComponent(int component, float multiplier)
@@ -75,18 +100,26 @@ namespace Lab3
 
         public static void Power(Bitmap bitmap, float power, bool affectAlpha)
         {
-            for (int w = 0; w < bitmap.Width; ++w)
+            BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),
+                ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+
+            unsafe
             {
-                for (int h = 0; h < bitmap.Height; ++h)
+                byte* components = (byte*)data.Scan0;
+                for (int w = 0; w < bitmap.Width; ++w)
                 {
-                    Color source = bitmap.GetPixel(w, h);
-                    bitmap.SetPixel(w, h, Color.FromArgb(
-                        affectAlpha ? PowerComponent(source.A, power) : source.A,
-                        PowerComponent(source.R, power),
-                        PowerComponent(source.G, power),
-                        PowerComponent(source.B, power)));
+                    for (int h = 0; h < bitmap.Height; ++h)
+                    {
+                        int startIndex = w * 4 + h * data.Stride;
+                        for (int index = 0; index < (affectAlpha ? 4 : 3); ++index)
+                        {
+                            components[startIndex + index] = (byte)PowerComponent(components[startIndex + index], power);
+                        }
+                    }
                 }
             }
+
+            bitmap.UnlockBits(data);
         }
 
         private static int PowerComponent(int component, float power)
@@ -96,18 +129,26 @@ namespace Lab3
 
         public static void Log(Bitmap bitmap, bool affectAlpha)
         {
-            for (int w = 0; w < bitmap.Width; ++w)
+            BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),
+                ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+
+            unsafe
             {
-                for (int h = 0; h < bitmap.Height; ++h)
+                byte* components = (byte*)data.Scan0;
+                for (int w = 0; w < bitmap.Width; ++w)
                 {
-                    Color source = bitmap.GetPixel(w, h);
-                    bitmap.SetPixel(w, h, Color.FromArgb(
-                        affectAlpha ? LogComponent(source.A) : source.A,
-                        LogComponent(source.R),
-                        LogComponent(source.G),
-                        LogComponent(source.B)));
+                    for (int h = 0; h < bitmap.Height; ++h)
+                    {
+                        int startIndex = w * 4 + h * data.Stride;
+                        for (int index = 0; index < (affectAlpha ? 4 : 3); ++index)
+                        {
+                            components[startIndex + index] = (byte)LogComponent(components[startIndex + index]);
+                        }
+                    }
                 }
             }
+
+            bitmap.UnlockBits(data);
         }
 
         private static int LogComponent(int component)
@@ -118,37 +159,42 @@ namespace Lab3
         public static void LinearContrast(Bitmap bitmap, bool affectAlpha = false, 
             int targetMin = 0, int targetMax = 255)
         {
-            int realMin = 255;
-            int realMax = 0;
+            BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),
+                ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
 
-            for (int w = 0; w < bitmap.Width; ++w)
+            unsafe
             {
-                for (int h = 0; h < bitmap.Height; ++h)
+                byte* components = (byte*)data.Scan0;
+                int realMin = 255;
+                int realMax = 0;
+
+                for (int w = 0; w < bitmap.Width; ++w)
                 {
-                    Color source = bitmap.GetPixel(w, h);
-                    if (affectAlpha)
+                    for (int h = 0; h < bitmap.Height; ++h)
                     {
-                        UpdateMinMax(source.A, realMin, realMax, out realMin, out realMax);
+                        int startIndex = w * 4 + h * data.Stride;
+                        for (int index = 0; index < (affectAlpha ? 4 : 3); ++index)
+                        {
+                            UpdateMinMax(components[startIndex + index], realMin, realMax, out realMin, out realMax);
+                        }
                     }
-
-                    UpdateMinMax(source.R, realMin, realMax, out realMin, out realMax);
-                    UpdateMinMax(source.G, realMin, realMax, out realMin, out realMax);
-                    UpdateMinMax(source.B, realMin, realMax, out realMin, out realMax);
                 }
-            }
 
-            for (int w = 0; w < bitmap.Width; ++w)
-            {
-                for (int h = 0; h < bitmap.Height; ++h)
+                for (int w = 0; w < bitmap.Width; ++w)
                 {
-                    Color source = bitmap.GetPixel(w, h);
-                    bitmap.SetPixel(w, h, Color.FromArgb(
-                        affectAlpha ? FitComponent(source.A, realMin, realMax, targetMin, targetMax) : source.A,
-                        FitComponent(source.R, realMin, realMax, targetMin, targetMax),
-                        FitComponent(source.G, realMin, realMax, targetMin, targetMax),
-                        FitComponent(source.B, realMin, realMax, targetMin, targetMax)));
+                    for (int h = 0; h < bitmap.Height; ++h)
+                    {
+                        int startIndex = w * 4 + h * data.Stride;
+                        for (int index = 0; index < (affectAlpha ? 4 : 3); ++index)
+                        {
+                            components[startIndex + index] = (byte)FitComponent(components[startIndex +index],
+                                realMin, realMax, targetMin, targetMax);
+                        }
+                    }
                 }
             }
+
+            bitmap.UnlockBits(data);
         }
 
         private static void UpdateMinMax(int value, int currentMin, int currentMax, 

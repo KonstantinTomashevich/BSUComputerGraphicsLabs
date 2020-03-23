@@ -147,8 +147,11 @@ namespace Lab3
                     return;
                 }
 
+                pictureView.Image = null;
                 PerElementModificators.LinearContrast(selectedBitmap, linearContrastAlphaCheck.Checked,
                     (int)contrastMinInput.Value, (int)contrastMaxInput.Value);
+
+                pictureView.Image = selectedBitmap;
                 pictureView.Invalidate();
             }
         }
