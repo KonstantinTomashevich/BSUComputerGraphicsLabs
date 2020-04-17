@@ -9,6 +9,7 @@ namespace Lab5
 {
     class Drawer
     {
+        private static int GRID_DIVISIONS = 10;
         private static Font DEFAULT_FONT => new Font("Arial", 8);
         private static Brush BACKGROUND_BRUSH = new SolidBrush(Color.FromArgb(50, 50, 50));
         private static Brush TEXT_BRUSH = new SolidBrush(Color.FromArgb(200, 200, 200));
@@ -34,7 +35,10 @@ namespace Lab5
             graphics = Graphics.FromImage(bitmap);
 
             graphics.FillRectangle(BACKGROUND_BRUSH, new Rectangle(0, 0, imageRect.Width, imageRect.Height));
-            for (int x = 0; x < imageRect.Width; x += 50)
+            int gridXStep = imageRect.Width / GRID_DIVISIONS;
+            int gridYStep = imageRect.Height / GRID_DIVISIONS;
+
+            for (int x = 0; x < imageRect.Width; x += gridXStep)
             {
                 graphics.DrawLine(GRID_PEN, x, 0, x, imageRect.Height);
                 if (x != 0)
@@ -43,7 +47,7 @@ namespace Lab5
                 }
             }
 
-            for (int y = 0; y < imageRect.Height; y += 50)
+            for (int y = 0; y < imageRect.Height; y += gridYStep)
             {
                 graphics.DrawLine(GRID_PEN, 0, y, imageRect.Width, y);
                 if (y != 0)
