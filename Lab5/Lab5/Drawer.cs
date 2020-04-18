@@ -141,6 +141,7 @@ namespace Lab5
 
             byte currentCode;
             byte nextCode = PlacementCode(points[0].X, points[0].Y);
+            byte lastOut = 0;
 
             for (int index = 0; index < points.Count; ++index)
             {
@@ -160,45 +161,121 @@ namespace Lab5
                     result.Add(current);
                 }
 
-                if (currentCode != 0 || nextCode != 0)
+                byte crossedIn = AddIntermediatePoint(current, next, currentCode, result);
+                if (currentCode != 0 && lastOut != 0)
                 {
-                    AddIntermediatePoint(current, next, currentCode, result);
-                    AddIntermediatePoint(current, next, nextCode, result);
+                    AddCorners(crossedIn, lastOut, next.X - current.X, next.Y - current.Y, result);
                 }
+
+                byte crossedOut = AddIntermediatePoint(current, next, nextCode, result);
+                if (nextCode != 0 && crossedOut != 0)
+                {
+                    lastOut = crossedOut;
+                }
+            }
+
+            if (!result.Any())
+            {
+                result.Add(new Point(clippingRect.X, clippingRect.Y));
+                result.Add(new Point(clippingRect.X + clippingRect.Width, clippingRect.Y));
+                result.Add(new Point(clippingRect.X + clippingRect.Width, clippingRect.Y + clippingRect.Height));
+                result.Add(new Point(clippingRect.X, clippingRect.Y + clippingRect.Height));
             }
 
             return result;
         }
 
-        private void AddIntermediatePoint(Point current, Point next, byte mask, List<Point> result)
+        private byte AddIntermediatePoint(Point current, Point next, byte mask, List<Point> result)
         {
             if (mask == 0)
             {
-                return;
+                return 0;
             }
 
             if ((mask & BIT_MAX_Y_INTERSECTION) != 0 && 
                 TestYIntersection(current, next, clippingRect.Y + clippingRect.Height, result))
             {
-                return;
+                return BIT_MAX_Y_INTERSECTION;
             }
 
             if ((mask & BIT_MIN_Y_INTERSECTION) != 0 && 
                 TestYIntersection(current, next, clippingRect.Y, result))
             {
-                return;
+                return BIT_MIN_Y_INTERSECTION;
             }
 
             if ((mask & BIT_MAX_X_INTERSECTION) != 0 &&
                 TestXIntersection(current, next, clippingRect.X + clippingRect.Width, result))
             {
-                return;
+                return BIT_MAX_X_INTERSECTION;
             }
 
             if ((mask & BIT_MIN_X_INTERSECTION) != 0 && 
                 TestXIntersection(current, next, clippingRect.X, result))
             {
+                return BIT_MIN_X_INTERSECTION;
+            }
+
+            return 0;
+        }
+
+        private void AddCorners(int inTransition, int outTransition, int inDx, int inDy, List<Point> result)
+        {
+            if (inTransition == 0 || inTransition == outTransition)
+            {
                 return;
+            }
+
+            if ((inTransition | outTransition) % 3 == 0)
+            {
+                int x = ((inTransition | outTransition) & BIT_MIN_X_INTERSECTION) != 0 ?
+                            clippingRect.X : clippingRect.X + clippingRect.Width;
+
+                int y = ((inTransition | outTransition) & BIT_MIN_Y_INTERSECTION) != 0 ?
+                    clippingRect.Y : clippingRect.Y + clippingRect.Height;
+
+                result.Insert(result.Count - 1, new Point(x, y));
+            }
+            else if (((inTransition | outTransition) & (BIT_MAX_X_INTERSECTION | BIT_MIN_X_INTERSECTION)) != 0)
+            {
+                if (((inTransition | outTransition) & BIT_MAX_Y_INTERSECTION) != 0)
+                {
+                    if (inDy > 0)
+                    {
+                        result.Insert(result.Count - 1, new Point(
+                            clippingRect.X, clippingRect.Y));
+
+                        result.Insert(result.Count - 1, new Point(
+                            clippingRect.X + clippingRect.Width, clippingRect.Y));
+                    }
+                    else
+                    {
+                        result.Insert(result.Count - 1, new Point(
+                            clippingRect.X, clippingRect.Y + clippingRect.Height));
+
+                        result.Insert(result.Count - 1, new Point(
+                            clippingRect.X + clippingRect.Width, clippingRect.Y + clippingRect.Height));
+                    }
+                }
+            }
+            else if (((inTransition | outTransition) & (BIT_MAX_Y_INTERSECTION | BIT_MIN_Y_INTERSECTION)) != 0)
+            {
+                if (inDx > 0)
+                {
+                    result.Insert(result.Count - 1, new Point(
+                        clippingRect.X, clippingRect.Y));
+
+                    result.Insert(result.Count - 1, new Point(
+                        clippingRect.X, clippingRect.Y + clippingRect.Height));
+                }
+                else
+                {
+                    result.Insert(result.Count - 1, new Point(
+                        clippingRect.X + clippingRect.Width, clippingRect.Y));
+
+                    result.Insert(result.Count - 1, new Point(
+                        clippingRect.X + clippingRect.Width, clippingRect.Y + clippingRect.Height));
+                }
             }
         }
 
@@ -231,7 +308,7 @@ namespace Lab5
             {
                 return false;
             }
-
+            
             int y = (int)Math.Round(current.Y + dY * (x - current.X) / (float)dX);
             if (PlacementCode(x, y) == 0)
             {
