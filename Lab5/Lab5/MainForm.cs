@@ -53,15 +53,7 @@ namespace Lab5
                 return;
             }
 
-            int x1 = config[config.Count - 4];
-            int y1 = config[config.Count - 3];
-            int x2 = config[config.Count - 2];
-            int y2 = config[config.Count - 1];
-
-            x1 = Math.Min(x1, x2);
-            y1 = Math.Min(y1, y2);
-
-            drawer.Start(new Rectangle(x1, y1, x2 - x1, y2 - y1));
+            drawer.Start(parseClippingRect(config));
             int lineStartIndex = 0;
 
             while (lineStartIndex < config.Count - 4)
@@ -73,6 +65,18 @@ namespace Lab5
 
             resultPictureBox.Image = drawer.End();
             resultPictureBox.Invalidate();
+        }
+
+        private Rectangle parseClippingRect(List<int> config)
+        {
+            int x1 = config[config.Count - 4];
+            int y1 = config[config.Count - 3];
+            int x2 = config[config.Count - 2];
+            int y2 = config[config.Count - 1];
+
+            x1 = Math.Min(x1, x2);
+            y1 = Math.Min(y1, y2);
+            return new Rectangle(x1, y1, x2 - x1, y2 - y1);
         }
 
         private void polygonClipButton_Click(object sender, EventArgs e)
@@ -88,6 +92,20 @@ namespace Lab5
                 MessageBox.Show("Incorrect configuration format, check readme!", "Error!");
                 return;
             }
+
+            drawer.Start(parseClippingRect(config));
+            List<Point> points = new List<Point>();
+            int pointStartIndex = 0;
+
+            while (pointStartIndex < config.Count - 4)
+            {
+                points.Add(new Point(config[pointStartIndex], config[pointStartIndex + 1]));
+                pointStartIndex += 2;
+            }
+
+            drawer.DrawPolygon(points);
+            resultPictureBox.Image = drawer.End();
+            resultPictureBox.Invalidate();
         }
     }
 }

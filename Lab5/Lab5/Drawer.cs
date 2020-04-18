@@ -24,6 +24,11 @@ namespace Lab5
         private Rectangle clippingRect;
         private Rectangle imageRect;
 
+        private byte BIT_MAX_Y_INTERSECTION = 1;
+        private byte BIT_MAX_X_INTERSECTION = 1 << 1;
+        private byte BIT_MIN_Y_INTERSECTION = 1 << 2;
+        private byte BIT_MIN_X_INTERSECTION = 1 << 3;
+
         public void Start(Rectangle clippingRect)
         {
             this.clippingRect = clippingRect;
@@ -62,7 +67,8 @@ namespace Lab5
 
         public void DrawLine(int x0, int y0, int x1, int y1)
         {
-            graphics.DrawLine(BASE_LINE_PEN, x0 - imageRect.X, y0 - imageRect.Y, x1 - imageRect.X, y1 - imageRect.Y);
+            graphics.DrawLine(BASE_LINE_PEN, x0 - imageRect.X, y0 - imageRect.Y, 
+                x1 - imageRect.X, y1 - imageRect.Y);
             DrawLineWithMedianPointClipping(x0, y0, x1, y1);
         }
 
@@ -86,7 +92,8 @@ namespace Lab5
 
             if ((code0 | code1) == 0)
             {
-                graphics.DrawLine(CLIPPED_LINE_PEN, x0 - imageRect.X, y0 - imageRect.Y, x1 - imageRect.X, y1 - imageRect.Y);
+                graphics.DrawLine(CLIPPED_LINE_PEN, x0 - imageRect.X, y0 - imageRect.Y, 
+                    x1 - imageRect.X, y1 - imageRect.Y);
                 return;
             }
 
@@ -100,11 +107,139 @@ namespace Lab5
         private byte PlacementCode(float x, float y)
         {
             byte code = 0;
-            if (y > clippingRect.Y + clippingRect.Height) code |= 1;
-            if (x > clippingRect.X + clippingRect.Width) code |= 1 << 1;
-            if (y < clippingRect.Y) code |= 1 << 2;
-            if (x < clippingRect.X) code |= 1 << 3;
+            if (y > clippingRect.Y + clippingRect.Height) code |= BIT_MAX_Y_INTERSECTION;
+            if (x > clippingRect.X + clippingRect.Width) code |= BIT_MAX_X_INTERSECTION;
+            if (y < clippingRect.Y) code |= BIT_MIN_Y_INTERSECTION;
+            if (x < clippingRect.X) code |= BIT_MIN_X_INTERSECTION;
             return code;
+        }
+
+        public void DrawPolygon(List<Point> points)
+        {
+            DrawPolygonByPoints(BASE_LINE_PEN, points);
+            DrawPolygonByPoints(CLIPPED_LINE_PEN, ClipPolygon(points));
+        }
+
+        private void DrawPolygonByPoints(Pen pen, List<Point> points)
+        {
+            for (int index = 0; index < points.Count; ++index)
+            {
+                Point current = points[index];
+                Point next = points[(index + 1) % points.Count];
+                graphics.DrawLine(pen, current.X - imageRect.X, current.Y - imageRect.Y,
+                    next.X - imageRect.X, next.Y - imageRect.Y);
+            }
+        }
+
+        private List<Point> ClipPolygon(List<Point> points)
+        {
+            List<Point> result = new List<Point>();
+            if (!points.Any())
+            {
+                return result;
+            }
+
+            byte currentCode;
+            byte nextCode = PlacementCode(points[0].X, points[0].Y);
+
+            for (int index = 0; index < points.Count; ++index)
+            {
+                Point current = points[index];
+                Point next = points[(index + 1) % points.Count];
+
+                currentCode = nextCode;
+                nextCode = PlacementCode(next.X, next.Y);
+
+                if ((currentCode & nextCode) != 0)
+                {
+                    continue;
+                }
+
+                if (currentCode == 0)
+                {
+                    result.Add(current);
+                }
+
+                if (currentCode != 0 || nextCode != 0)
+                {
+                    AddIntermediatePoint(current, next, currentCode, result);
+                    AddIntermediatePoint(current, next, nextCode, result);
+                }
+            }
+
+            return result;
+        }
+
+        private void AddIntermediatePoint(Point current, Point next, byte mask, List<Point> result)
+        {
+            if (mask == 0)
+            {
+                return;
+            }
+
+            if ((mask & BIT_MAX_Y_INTERSECTION) != 0 && 
+                TestYIntersection(current, next, clippingRect.Y + clippingRect.Height, result))
+            {
+                return;
+            }
+
+            if ((mask & BIT_MIN_Y_INTERSECTION) != 0 && 
+                TestYIntersection(current, next, clippingRect.Y, result))
+            {
+                return;
+            }
+
+            if ((mask & BIT_MAX_X_INTERSECTION) != 0 &&
+                TestXIntersection(current, next, clippingRect.X + clippingRect.Width, result))
+            {
+                return;
+            }
+
+            if ((mask & BIT_MIN_X_INTERSECTION) != 0 && 
+                TestXIntersection(current, next, clippingRect.X, result))
+            {
+                return;
+            }
+        }
+
+        private bool TestYIntersection(Point current, Point next, int y, List<Point> output)
+        {
+            int dX = next.X - current.X;
+            int dY = next.Y - current.Y;
+
+            if (dY == 0)
+            {
+                return false;
+            }
+
+            int x = (int)Math.Round(current.X + dX * (y - current.Y) / (float)dY);
+            if (PlacementCode(x, y) == 0)
+            {
+                output.Add(new Point(x, y));
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool TestXIntersection(Point current, Point next, int x, List<Point> output)
+        {
+            int dX = next.X - current.X;
+            int dY = next.Y - current.Y;
+
+            if (dX == 0)
+            {
+                return false;
+            }
+
+            int y = (int)Math.Round(current.Y + dY * (x - current.X) / (float)dX);
+            if (PlacementCode(x, y) == 0)
+            {
+                output.Add(new Point(x, y));
+                return true;
+            }
+
+            return false;
         }
 
         public Bitmap End()
