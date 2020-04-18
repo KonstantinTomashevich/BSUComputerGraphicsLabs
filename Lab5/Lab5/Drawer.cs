@@ -24,10 +24,10 @@ namespace Lab5
         private Rectangle clippingRect;
         private Rectangle imageRect;
 
-        private byte BIT_MAX_Y_INTERSECTION = 1;
-        private byte BIT_MAX_X_INTERSECTION = 1 << 1;
-        private byte BIT_MIN_Y_INTERSECTION = 1 << 2;
-        private byte BIT_MIN_X_INTERSECTION = 1 << 3;
+        private const byte BIT_MAX_Y_INTERSECTION = 1;
+        private const byte BIT_MAX_X_INTERSECTION = 1 << 1;
+        private const byte BIT_MIN_Y_INTERSECTION = 1 << 2;
+        private const byte BIT_MIN_X_INTERSECTION = 1 << 3;
 
         public void Start(Rectangle clippingRect)
         {
@@ -139,147 +139,63 @@ namespace Lab5
                 return result;
             }
 
-            byte currentCode;
-            byte nextCode = PlacementCode(points[0].X, points[0].Y);
-            byte lastOut = 0;
-
-            for (int index = 0; index < points.Count; ++index)
+            for (byte line = 1; line <= 8; line *= 2)
             {
-                Point current = points[index];
-                Point next = points[(index + 1) % points.Count];
+                byte currentCode;
+                byte nextCode = PlacementCode(points[0].X, points[0].Y);
 
-                currentCode = nextCode;
-                nextCode = PlacementCode(next.X, next.Y);
-
-                if ((currentCode & nextCode) != 0)
+                for (int index = 0; index < points.Count; ++index)
                 {
-                    continue;
-                }
+                    Point current = points[index];
+                    Point next = points[(index + 1) % points.Count];
 
-                if (currentCode == 0)
-                {
-                    result.Add(current);
-                }
+                    currentCode = nextCode;
+                    nextCode = PlacementCode(next.X, next.Y);
 
-                byte crossedIn = AddIntermediatePoint(current, next, currentCode, result);
-                if (currentCode != 0 && lastOut != 0)
-                {
-                    AddCorners(crossedIn, lastOut, next.X - current.X, next.Y - current.Y, result);
-                }
-
-                byte crossedOut = AddIntermediatePoint(current, next, nextCode, result);
-                if (nextCode != 0 && crossedOut != 0)
-                {
-                    lastOut = crossedOut;
-                }
-            }
-
-            if (!result.Any())
-            {
-                result.Add(new Point(clippingRect.X, clippingRect.Y));
-                result.Add(new Point(clippingRect.X + clippingRect.Width, clippingRect.Y));
-                result.Add(new Point(clippingRect.X + clippingRect.Width, clippingRect.Y + clippingRect.Height));
-                result.Add(new Point(clippingRect.X, clippingRect.Y + clippingRect.Height));
-            }
-
-            return result;
-        }
-
-        private byte AddIntermediatePoint(Point current, Point next, byte mask, List<Point> result)
-        {
-            if (mask == 0)
-            {
-                return 0;
-            }
-
-            if ((mask & BIT_MAX_Y_INTERSECTION) != 0 && 
-                TestYIntersection(current, next, clippingRect.Y + clippingRect.Height, result))
-            {
-                return BIT_MAX_Y_INTERSECTION;
-            }
-
-            if ((mask & BIT_MIN_Y_INTERSECTION) != 0 && 
-                TestYIntersection(current, next, clippingRect.Y, result))
-            {
-                return BIT_MIN_Y_INTERSECTION;
-            }
-
-            if ((mask & BIT_MAX_X_INTERSECTION) != 0 &&
-                TestXIntersection(current, next, clippingRect.X + clippingRect.Width, result))
-            {
-                return BIT_MAX_X_INTERSECTION;
-            }
-
-            if ((mask & BIT_MIN_X_INTERSECTION) != 0 && 
-                TestXIntersection(current, next, clippingRect.X, result))
-            {
-                return BIT_MIN_X_INTERSECTION;
-            }
-
-            return 0;
-        }
-
-        private void AddCorners(int inTransition, int outTransition, int inDx, int inDy, List<Point> result)
-        {
-            if (inTransition == 0 || inTransition == outTransition)
-            {
-                return;
-            }
-
-            if ((inTransition | outTransition) % 3 == 0)
-            {
-                int x = ((inTransition | outTransition) & BIT_MIN_X_INTERSECTION) != 0 ?
-                            clippingRect.X : clippingRect.X + clippingRect.Width;
-
-                int y = ((inTransition | outTransition) & BIT_MIN_Y_INTERSECTION) != 0 ?
-                    clippingRect.Y : clippingRect.Y + clippingRect.Height;
-
-                result.Insert(result.Count - 1, new Point(x, y));
-            }
-            else if (((inTransition | outTransition) & (BIT_MAX_X_INTERSECTION | BIT_MIN_X_INTERSECTION)) != 0)
-            {
-                if (((inTransition | outTransition) & BIT_MAX_Y_INTERSECTION) != 0)
-                {
-                    if (inDy > 0)
+                    if ((currentCode & line) != 0 && (nextCode & line) != 0)
                     {
-                        result.Insert(result.Count - 1, new Point(
-                            clippingRect.X, clippingRect.Y));
-
-                        result.Insert(result.Count - 1, new Point(
-                            clippingRect.X + clippingRect.Width, clippingRect.Y));
+                        continue;
                     }
-                    else
+
+                    if ((currentCode & line) == 0)
                     {
-                        result.Insert(result.Count - 1, new Point(
-                            clippingRect.X, clippingRect.Y + clippingRect.Height));
-
-                        result.Insert(result.Count - 1, new Point(
-                            clippingRect.X + clippingRect.Width, clippingRect.Y + clippingRect.Height));
+                        result.Add(current);
                     }
+
+                    AddIntermediatePoint(current, next, currentCode, line, result);
+                    AddIntermediatePoint(current, next, nextCode, line, result);
                 }
+
+                points = result;
+                result = new List<Point>();
             }
-            else if (((inTransition | outTransition) & (BIT_MAX_Y_INTERSECTION | BIT_MIN_Y_INTERSECTION)) != 0)
+
+            return points;
+        }
+
+        private void AddIntermediatePoint(Point current, Point next, byte mask, byte clipper, List<Point> result)
+        {
+            if ((mask & clipper) != 0)
             {
-                if (inDx > 0)
+                switch (clipper)
                 {
-                    result.Insert(result.Count - 1, new Point(
-                        clippingRect.X, clippingRect.Y));
-
-                    result.Insert(result.Count - 1, new Point(
-                        clippingRect.X, clippingRect.Y + clippingRect.Height));
-                }
-                else
-                {
-                    result.Insert(result.Count - 1, new Point(
-                        clippingRect.X + clippingRect.Width, clippingRect.Y));
-
-                    result.Insert(result.Count - 1, new Point(
-                        clippingRect.X + clippingRect.Width, clippingRect.Y + clippingRect.Height));
+                    case BIT_MAX_Y_INTERSECTION:
+                        TestYIntersection(current, next, clippingRect.Y + clippingRect.Height, clipper, result);
+                        break;
+                    case BIT_MIN_Y_INTERSECTION:
+                        TestYIntersection(current, next, clippingRect.Y, clipper, result);
+                        break;
+                    case BIT_MAX_X_INTERSECTION:
+                        TestXIntersection(current, next, clippingRect.X + clippingRect.Width, clipper, result);
+                        break;
+                    case BIT_MIN_X_INTERSECTION:
+                        TestXIntersection(current, next, clippingRect.X, clipper, result);
+                        break;
                 }
             }
         }
 
-        private bool TestYIntersection(Point current, Point next, int y, List<Point> output)
+        private bool TestYIntersection(Point current, Point next, int y, byte clipper, List<Point> output)
         {
             int dX = next.X - current.X;
             int dY = next.Y - current.Y;
@@ -290,7 +206,7 @@ namespace Lab5
             }
 
             int x = (int)Math.Round(current.X + dX * (y - current.Y) / (float)dY);
-            if (PlacementCode(x, y) == 0)
+            if ((PlacementCode(x, y) & clipper) == 0)
             {
                 output.Add(new Point(x, y));
                 return true;
@@ -299,7 +215,7 @@ namespace Lab5
             return false;
         }
 
-        private bool TestXIntersection(Point current, Point next, int x, List<Point> output)
+        private bool TestXIntersection(Point current, Point next, int x, byte clipper, List<Point> output)
         {
             int dX = next.X - current.X;
             int dY = next.Y - current.Y;
@@ -310,7 +226,7 @@ namespace Lab5
             }
             
             int y = (int)Math.Round(current.Y + dY * (x - current.X) / (float)dX);
-            if (PlacementCode(x, y) == 0)
+            if ((PlacementCode(x, y) & clipper) == 0)
             {
                 output.Add(new Point(x, y));
                 return true;
