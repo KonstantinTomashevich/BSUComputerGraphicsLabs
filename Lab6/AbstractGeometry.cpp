@@ -27,9 +27,9 @@ void AbstractGeometry::UpdateBuffers ()
 
 void AbstractGeometry::DrawElements (Shader *shader)
 {
-    ConfigureShader (shader);
     glBindBuffer (GL_ARRAY_BUFFER, vertexBufferHandle_);
     glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, indexBufferHandle_);
+    ConfigureShader (shader);
     glDrawElements (primitiveType_, GetIndexBufferSize (), GL_UNSIGNED_INT, nullptr);
 }
 

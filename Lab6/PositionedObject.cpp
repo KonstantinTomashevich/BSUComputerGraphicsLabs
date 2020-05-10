@@ -66,11 +66,10 @@ void PositionedObject::RecalculateMatrix ()
 {
     mat4x4_identity (modelSpaceMatrix_);
     mat4x4_translate (modelSpaceMatrix_, position_[0], position_[1], position_[2]);
+    mat4x4_scale_aniso (modelSpaceMatrix_, modelSpaceMatrix_, scale_[0], scale_[1], scale_[2]);
 
     mat4x4_rotate_X (modelSpaceMatrix_, modelSpaceMatrix_, rotation_[0]);
     mat4x4_rotate_Y (modelSpaceMatrix_, modelSpaceMatrix_, rotation_[1]);
     mat4x4_rotate_Z (modelSpaceMatrix_, modelSpaceMatrix_, rotation_[2]);
-
-    mat4x4_scale_aniso (modelSpaceMatrix_, modelSpaceMatrix_, scale_[0], scale_[1], scale_[2]);
     matrixDirty_ = false;
 }

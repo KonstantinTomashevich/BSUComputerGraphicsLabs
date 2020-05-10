@@ -28,8 +28,6 @@ private:
 template <typename VertexStruct, VertexConfigurator VertexConfigurator> class Geometry : public GeometryBase
 {
 public:
-    std::vector <VertexStruct> vertices_;
-
     Geometry ()
         : vertices_ ()
     {
@@ -64,4 +62,5 @@ protected:
     }
 
 private:
+    std::vector <VertexStruct> vertices_;
 };
