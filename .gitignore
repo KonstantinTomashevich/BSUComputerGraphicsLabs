@@ -132,4 +132,3 @@ project.lock.json
 project.assets.json
 
 cmake-build-*
-glfw/
