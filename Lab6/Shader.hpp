@@ -17,6 +17,7 @@ public:
 
 private:
     void SetupProgram (const char *vertexCode, const char *fragmentCode);
+    void CheckShaderCompilationStatus (GLuint shaderHandle, const char *code) const;
     void FetchAttributesAndUniforms ();
 
     GLuint programHandle_;

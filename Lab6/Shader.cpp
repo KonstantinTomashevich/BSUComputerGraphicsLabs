@@ -1,4 +1,5 @@
 #include "Shader.hpp"
+#include <iostream>
 
 Shader::Shader (const char *vertexCode, const char *fragmentCode)
     : uniformHandles_ (),
@@ -38,10 +39,12 @@ void Shader::SetupProgram (const char *vertexCode, const char *fragmentCode)
     GLuint vertexShader = glCreateShader (GL_VERTEX_SHADER);
     glShaderSource (vertexShader, 1, &vertexCode, NULL);
     glCompileShader (vertexShader);
+    CheckShaderCompilationStatus (vertexShader, vertexCode);
 
     GLuint fragmentShader = glCreateShader (GL_FRAGMENT_SHADER);
     glShaderSource (fragmentShader, 1, &fragmentCode, NULL);
     glCompileShader (fragmentShader);
+    CheckShaderCompilationStatus (fragmentShader, fragmentCode);
 
     programHandle_ = glCreateProgram ();
     glAttachShader (programHandle_, vertexShader);
@@ -50,6 +53,29 @@ void Shader::SetupProgram (const char *vertexCode, const char *fragmentCode)
 
     glDeleteShader (vertexShader);
     glDeleteShader (fragmentShader);
+}
+
+void Shader::CheckShaderCompilationStatus (GLuint shaderHandle, const char *code) const
+{
+    GLint success;
+    glGetShaderiv (shaderHandle, GL_COMPILE_STATUS, &success);
+
+    if (success == GL_FALSE)
+    {
+        std::cerr << "Error while compiling shader:" << std::endl << code << std::endl;
+        GLint logSize = 0;
+        glGetShaderiv (shaderHandle, GL_INFO_LOG_LENGTH, &logSize);
+
+        GLint maxLength = 0;
+        glGetShaderiv (shaderHandle, GL_INFO_LOG_LENGTH, &maxLength);
+
+        std::string log;
+        log.resize (maxLength + 1, '\0');
+        glGetShaderInfoLog (shaderHandle, maxLength, &maxLength, &log[0]);
+
+        std::cerr << "Compilation log:" << std::endl << log << std::endl;
+        throw std::runtime_error ("Unable to compile vertex shader!");
+    }
 }
 
 void Shader::FetchAttributesAndUniforms ()

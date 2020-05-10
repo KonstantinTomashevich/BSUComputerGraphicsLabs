@@ -27,10 +27,7 @@ void AbstractGeometry::UpdateBuffers ()
 
 void AbstractGeometry::DrawElements (Shader *shader)
 {
-    GLuint vPosAttribute = shader->GetAttributeHandle (positionAttributeNameHash);
-    glEnableVertexAttribArray (vPosAttribute);
-    SetupPositionAttribute (vPosAttribute);
-
+    ConfigureShader (shader);
     glBindBuffer (GL_ARRAY_BUFFER, vertexBufferHandle_);
     glBindBuffer (GL_ELEMENT_ARRAY_BUFFER, indexBufferHandle_);
     glDrawElements (primitiveType_, GetIndexBufferSize (), GL_UNSIGNED_INT, nullptr);

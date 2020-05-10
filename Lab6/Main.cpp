@@ -2,9 +2,11 @@
 #include "Constants.hpp"
 #include "Shader.hpp"
 #include "DiffuseColorMaterial.hpp"
-#include "SimpleGeometry.hpp"
+#include "Geometry.hpp"
 #include "Drawable.hpp"
 #include "PerspectiveCamera.hpp"
+#include "Vertex.hpp"
+#include "EmptyMaterial.hpp"
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -13,6 +15,7 @@
 
 #include <cstdlib>
 #include <cstdio>
+#include <iostream>
 
 static void ErrorCallback (int error, const char *description)
 {
@@ -52,16 +55,15 @@ int main (int argumentCount, char **arguments)
     gladLoadGL (glfwGetProcAddress);
     glfwSwapInterval (1);
 
-    auto *shader = new Shader (simpleVertexShader, diffuseFragmentShader);
-    DiffuseColorMaterial material;
+    auto *shader = new Shader (vertexColorVertexShader, vertexColorFragmentShader);
+    EmptyMaterial material;
     material.SetLinkedShader (shader);
-    material.SetColor (0.7f, 0.7f, 0.2f);
 
-    auto *geometry = new SimpleGeometry ();
-    geometry->AddVertex (-0.6f, -0.4f, 0.0f);
-    geometry->AddVertex (0.6f, -0.4f, 0.0f);
-    geometry->AddVertex (0.0f, 0.6f, 0.0f);
-    geometry->AddVertex (0.0f, 1.0f, 0.0f);
+    auto *geometry = new Geometry <Position3fColorUIntVertex, Position3fColor3ubVertexConfigurator> ();
+    geometry->AddVertex ({-0.6f, -0.4f, 0.0f, 255, 0, 0});
+    geometry->AddVertex ({0.6f, -0.4f, 0.0f, 0, 255, 0});
+    geometry->AddVertex ({0.0f, 0.6f, 0.0f, 0, 0, 255});
+    geometry->AddVertex ({0.0f, 1.0f, 0.0f, 0, 0, 255});
 
     geometry->SetPrimitiveType (GL_TRIANGLES);
     geometry->AddTriangle (0, 1, 2);

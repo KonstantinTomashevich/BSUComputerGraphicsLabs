@@ -20,7 +20,7 @@ public:
 protected:
     GLuint primitiveType_;
 
-    virtual void SetupPositionAttribute (GLuint location) = 0;
+    virtual void ConfigureShader (Shader *shader) = 0;
     virtual void *GetVertexBuffer () = 0;
     virtual void *GetIndexBuffer () = 0;
 
