@@ -23,6 +23,7 @@ void Drawable::Draw (const mat4x4 &viewSpace)
     const mat4x4 &modelSpace = GetMatrix ();
     mat4x4_mul (mvp, (vec4 *) viewSpace, (vec4 *) modelSpace);
 
+    // TODO: We could use something like renderer context to stop reapplying same materials and shaders.
     linkedMaterial_->Apply ();
     linkedMaterial_->GetLinkedShader ()->SetMat4x4f (mvpUniformNameHash, mvp);
     linkedGeometry_->DrawElements (linkedMaterial_->GetLinkedShader ());

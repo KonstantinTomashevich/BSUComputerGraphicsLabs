@@ -1,6 +1,7 @@
 #pragma once
 #include <linmath.h>
 
+// TODO: Rewite as node for scene hierarchy support.
 class PositionedObject
 {
 public:
