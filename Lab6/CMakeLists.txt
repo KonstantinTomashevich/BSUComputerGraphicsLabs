@@ -11,5 +11,5 @@ include_directories(../glfw/deps)
 
 add_executable(Lab6 Main.cpp ../glfw/deps/glad/gl.h ../glfw/deps/glad_gl.c Constants.cpp Constants.hpp
         Shader.cpp Shader.hpp AbstractMaterial.hpp DiffuseColorMaterial.cpp DiffuseColorMaterial.hpp
-        AbstractGeometry.hpp Geometry.cpp Geometry.hpp AbstractGeometry.cpp PositionedObject.cpp PositionedObject.hpp Drawable.cpp Drawable.hpp AbstractMaterial.cpp AbstractCamera.cpp AbstractCamera.hpp PerspectiveCamera.cpp PerspectiveCamera.hpp Vertex.cpp Vertex.hpp Vertex.cpp EmptyMaterial.cpp EmptyMaterial.hpp)
+        AbstractGeometry.hpp Geometry.cpp Geometry.hpp AbstractGeometry.cpp PositionedObject.cpp PositionedObject.hpp Drawable.cpp Drawable.hpp AbstractMaterial.cpp AbstractCamera.cpp AbstractCamera.hpp PerspectiveCamera.cpp PerspectiveCamera.hpp Vertex.cpp Vertex.hpp Vertex.cpp EmptyMaterial.cpp EmptyMaterial.hpp Models.cpp Models.hpp)
 target_link_libraries(Lab6 glfw m)

@@ -1,12 +1,12 @@
 #include <glad/gl.h>
 #include "Constants.hpp"
 #include "Shader.hpp"
-#include "DiffuseColorMaterial.hpp"
 #include "Geometry.hpp"
 #include "Drawable.hpp"
 #include "PerspectiveCamera.hpp"
 #include "Vertex.hpp"
 #include "EmptyMaterial.hpp"
+#include "Models.hpp"
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -15,7 +15,15 @@
 
 #include <cstdlib>
 #include <cstdio>
-#include <iostream>
+
+#define CAMERA_MOVE_SPEED 5.0f
+
+struct
+{
+    double deltaTime = 0.0;
+    AbstractCamera *activeCamera = nullptr;
+    bool keyDown[GLFW_KEY_LAST + 1] = {false};
+} Context;
 
 static void ErrorCallback (int error, const char *description)
 {
@@ -28,6 +36,24 @@ static void KeyCallback (GLFWwindow *window, int key, int scancode, int action, 
     {
         glfwSetWindowShouldClose (window, GLFW_TRUE);
     }
+
+    if (action == GLFW_PRESS && key != GLFW_KEY_UNKNOWN)
+    {
+        Context.keyDown[key] = true;
+    }
+    else if (action == GLFW_RELEASE && key != GLFW_KEY_UNKNOWN)
+    {
+        Context.keyDown[key] = false;
+    }
+}
+
+static void MoveCamera (int xDir, int yDir, int zDir)
+{
+    const vec3 &cameraPosition = Context.activeCamera->GetLocalPosition ();
+    Context.activeCamera->SetLocalPosition (
+        cameraPosition[0] + (float) Context.deltaTime * (float) xDir * CAMERA_MOVE_SPEED,
+        cameraPosition[1] + (float) Context.deltaTime * (float) yDir * CAMERA_MOVE_SPEED,
+        cameraPosition[2] + (float) Context.deltaTime * (float) zDir * CAMERA_MOVE_SPEED);
 }
 
 int main (int argumentCount, char **arguments)
@@ -54,6 +80,7 @@ int main (int argumentCount, char **arguments)
     glfwMakeContextCurrent (window);
     gladLoadGL (glfwGetProcAddress);
     glfwSwapInterval (1);
+    glEnable (GL_DEPTH_TEST);
 
     auto *shader = new Shader (vertexColorVertexShader, vertexColorFragmentShader);
     EmptyMaterial material;
@@ -70,28 +97,52 @@ int main (int argumentCount, char **arguments)
     geometry->AddTriangle (1, 2, 3);
     geometry->UpdateBuffers ();
 
+    AbstractGeometry *gridGeometry = Generate2DGrid (21, 21, {150, 0, 0});
+
+    auto *gridDrawable = new Drawable ();
+    gridDrawable->SetLinkedGeometry (gridGeometry);
+    gridDrawable->SetLinkedMaterial (&material);
+
+    gridDrawable->SetLocalPosition (0.0f, 0.0f, 0.0f);
+    gridDrawable->SetLocalScale (10.0f, 10.0f, 10.0f);
+
     auto *drawable = new Drawable ();
     drawable->SetLinkedGeometry (geometry);
     drawable->SetLinkedMaterial (&material);
 
-    drawable->SetLocalPosition (5.0f, 0.0f, -10.0f);
+    drawable->SetLocalPosition (0.0f, 0.0f, 0.0f);
     drawable->SetLocalScale (1.0f, 2.0f, 1.0f);
 
     auto *camera = new PerspectiveCamera (M_PI / 3, 0.01f, 100.0f);
-    camera->SetLocalPosition (5.0f, 0.0f, 0.0f);
+    camera->SetLocalPosition (0.0f, 0.0f, 5.0f);
+    camera->SetLocalRotation (45.0f, 0.0f, 0.0f);
+    Context.activeCamera = camera;
 
+    double lastFrameTime = glfwGetTime ();
     while (!glfwWindowShouldClose (window))
     {
+        double currentFrameTime = glfwGetTime ();
+        Context.deltaTime = currentFrameTime - lastFrameTime;
+        lastFrameTime = currentFrameTime;
+
         int width, height;
         glfwGetFramebufferSize (window, &width, &height);
 
         glViewport (0, 0, width, height);
-        glClear (GL_COLOR_BUFFER_BIT);
+        glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        MoveCamera (
+            Context.keyDown[GLFW_KEY_A] ? -1 : (Context.keyDown[GLFW_KEY_D] ? 1 : 0),
+            Context.keyDown[GLFW_KEY_S] ? -1 : (Context.keyDown[GLFW_KEY_W] ? 1 : 0),
+            Context.keyDown[GLFW_KEY_Q] ? -1 : (Context.keyDown[GLFW_KEY_E] ? 1 : 0)
+        );
 
         mat4x4 projection;
         camera->GetViewMatrix (width, height, projection);
 
-        drawable->SetLocalRotation (0.0f, 0.0f, (float) glfwGetTime ());
+        gridDrawable->Draw (projection);
+        drawable->SetLocalRotation (0.0f, 0.0f,
+                                    drawable->GetLocalRotation ()[2] + (float) (Context.deltaTime * M_PI));
         drawable->Draw (projection);
 
         glfwSwapBuffers (window);
@@ -102,6 +153,9 @@ int main (int argumentCount, char **arguments)
     delete shader;
     delete camera;
     delete geometry;
+
+    delete gridGeometry;
+    delete gridDrawable;
     glfwDestroyWindow (window);
 
     glfwTerminate ();
