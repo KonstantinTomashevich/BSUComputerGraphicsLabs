@@ -21,7 +21,7 @@ typedef struct
 {
     Position3fVertex position;
     Color3ubVertex color;
-} Position3fColorUIntVertex;
+} Position3fColor3ubVertex;
 
 void Position3fVertexConfigurator (Shader *shader, std::size_t stride, std::size_t offset);
 void ColorUIntVertexConfigurator (Shader *shader, std::size_t stride, std::size_t offset);

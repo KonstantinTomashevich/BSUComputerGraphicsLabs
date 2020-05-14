@@ -40,9 +40,10 @@ public:
         vertices_.clear ();
     }
 
-    void AddVertex (VertexStruct vertex)
+    int AddVertex (VertexStruct vertex)
     {
         vertices_.push_back (vertex);
+        return vertices_.size() - 1;
     }
 
 protected:

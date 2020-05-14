@@ -86,35 +86,21 @@ int main (int argumentCount, char **arguments)
     EmptyMaterial material;
     material.SetLinkedShader (shader);
 
-    auto *geometry = new Geometry <Position3fColorUIntVertex, Position3fColor3ubVertexConfigurator> ();
-    geometry->AddVertex ({-0.6f, -0.4f, 0.0f, 255, 0, 0});
-    geometry->AddVertex ({0.6f, -0.4f, 0.0f, 0, 255, 0});
-    geometry->AddVertex ({0.0f, 0.6f, 0.0f, 0, 0, 255});
-    geometry->AddVertex ({0.0f, 1.0f, 0.0f, 0, 0, 255});
-
-    geometry->SetPrimitiveType (GL_TRIANGLES);
-    geometry->AddTriangle (0, 1, 2);
-    geometry->AddTriangle (1, 2, 3);
-    geometry->UpdateBuffers ();
-
     AbstractGeometry *gridGeometry = Generate2DGrid (21, 21, {150, 0, 0});
-
     auto *gridDrawable = new Drawable ();
     gridDrawable->SetLinkedGeometry (gridGeometry);
     gridDrawable->SetLinkedMaterial (&material);
 
-    gridDrawable->SetLocalPosition (0.0f, 0.0f, 0.0f);
+    gridDrawable->SetLocalPosition (0.0f, 0.0f, 0.0f);ыыыыы
     gridDrawable->SetLocalScale (10.0f, 10.0f, 10.0f);
 
-    auto *drawable = new Drawable ();
-    drawable->SetLinkedGeometry (geometry);
-    drawable->SetLinkedMaterial (&material);
-
-    drawable->SetLocalPosition (0.0f, 0.0f, 0.0f);
-    drawable->SetLocalScale (1.0f, 2.0f, 1.0f);
+    AbstractGeometry *symbolGeometry = GenerateTSymbol ();
+    auto *symbolDrawable = new Drawable();
+    symbolDrawable->SetLinkedGeometry (symbolGeometry);
+    symbolDrawable->SetLinkedMaterial (&material);
 
     auto *camera = new PerspectiveCamera (M_PI / 3, 0.01f, 100.0f);
-    camera->SetLocalPosition (0.0f, 0.0f, 5.0f);
+    camera->SetLocalPosition (0.0f, -10.0f, 5.0f);
     camera->SetLocalRotation (45.0f, 0.0f, 0.0f);
     Context.activeCamera = camera;
 
@@ -141,23 +127,22 @@ int main (int argumentCount, char **arguments)
         camera->GetViewMatrix (width, height, projection);
 
         gridDrawable->Draw (projection);
-        drawable->SetLocalRotation (0.0f, 0.0f,
-                                    drawable->GetLocalRotation ()[2] + (float) (Context.deltaTime * M_PI));
-        drawable->Draw (projection);
+        symbolDrawable->Draw (projection);
 
         glfwSwapBuffers (window);
         glfwPollEvents ();
     }
 
-    delete drawable;
     delete shader;
     delete camera;
-    delete geometry;
 
     delete gridGeometry;
-    delete gridDrawable;
-    glfwDestroyWindow (window);
+    delete symbolGeometry;
 
+    delete gridDrawable;
+    delete symbolDrawable;
+
+    glfwDestroyWindow (window);
     glfwTerminate ();
     exit (EXIT_SUCCESS);
 }
