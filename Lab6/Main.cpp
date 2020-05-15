@@ -104,7 +104,7 @@ int main (int argumentCount, char **arguments)
 
     auto *camera = new PerspectiveCamera (M_PI / 3, 0.01f, 100.0f);
     camera->SetLocalPosition (0.0f, -10.0f, 5.0f);
-    camera->SetLocalRotation (45.0f, 0.0f, 0.0f);
+    camera->SetLocalRotation (M_PI / 4, 0.0f, 0.0f);
     Context.activeCamera = camera;
 
     double lastFrameTime = glfwGetTime ();

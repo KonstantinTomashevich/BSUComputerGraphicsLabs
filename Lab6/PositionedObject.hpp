@@ -10,11 +10,12 @@ public:
 
     const mat4x4 &GetMatrix ();
     const vec3 &GetLocalPosition () const;
-    const vec3 &GetLocalRotation () const;
+    const quat &GetLocalRotation () const;
     const vec3 &GetLocalScale () const;
 
     void SetLocalPosition (float x, float y, float z);
     void SetLocalRotation (float x, float y, float z);
+    void SetLocalRotation (float x, float y, float z, float w);
     void SetLocalScale (float x, float y, float z);
 
 private:
@@ -22,7 +23,7 @@ private:
     void RecalculateMatrix ();
 
     vec3 position_;
-    vec3 rotation_;
+    quat rotation_;
     vec3 scale_;
 
     bool matrixDirty_;
