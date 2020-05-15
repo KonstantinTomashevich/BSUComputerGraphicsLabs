@@ -10,13 +10,13 @@
 #include <imgui.h>
 #include <examples/imgui_impl_glfw.h>
 #include <examples/imgui_impl_opengl3.h>
+#include <glm/gtc/type_ptr.hpp>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
 #include <cstdlib>
 #include <cstdio>
-#include <glm/gtc/type_ptr.hpp>
 
 #define CAMERA_MOVE_SPEED 5.0f
 
@@ -47,6 +47,22 @@ static void MoveCamera (int xDir, int yDir, int zDir)
         cameraPosition[0] + (float) Context.deltaTime * (float) xDir * CAMERA_MOVE_SPEED,
         cameraPosition[1] + (float) Context.deltaTime * (float) yDir * CAMERA_MOVE_SPEED,
         cameraPosition[2] + (float) Context.deltaTime * (float) zDir * CAMERA_MOVE_SPEED));
+}
+
+static void MatrixToString (const glm::mat4x4 &matrix, std::string &string)
+{
+    string = "";
+    const float *value = glm::value_ptr (matrix);
+
+    for (unsigned int row = 0; row < 4; ++row)
+    {
+        for (unsigned int col = 0; col < 4; ++col)
+        {
+            string += std::to_string (value [row * 4 + col]) + " ";
+        }
+
+        string += "\n";
+    }
 }
 
 int main (int argumentCount, char **arguments)
@@ -160,6 +176,25 @@ int main (int argumentCount, char **arguments)
             symbolDrawable->SetLocalPosition (position);
             symbolDrawable->SetLocalRotation (qRotation);
             symbolDrawable->SetLocalScale (scale);
+        }
+
+        std::string stringBuffer;
+        if (ImGui::CollapsingHeader ("View Space Matrix"))
+        {
+            MatrixToString(projection, stringBuffer);
+            ImGui::Text ("%s", stringBuffer.c_str ());
+        }
+
+        if (ImGui::CollapsingHeader ("Model Space Matrix"))
+        {
+            MatrixToString(symbolDrawable->GetMatrix (), stringBuffer);
+            ImGui::Text ("%s", stringBuffer.c_str ());
+        }
+
+        if (ImGui::CollapsingHeader ("Combined Matrix"))
+        {
+            MatrixToString(projection * symbolDrawable->GetMatrix (), stringBuffer);
+            ImGui::Text ("%s", stringBuffer.c_str ());
         }
 
         ImGui::End ();
