@@ -18,7 +18,7 @@ public:
 
 protected:
     void RecalculateProjection (
-        unsigned int viewportWidth, unsigned int viewportHeight, const mat4x4 &output) override;
+        unsigned int viewportWidth, unsigned int viewportHeight, glm::mat4x4 &output) override;
 
 private:
     float fov_;

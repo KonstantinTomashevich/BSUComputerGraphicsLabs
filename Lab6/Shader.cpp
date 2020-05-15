@@ -1,5 +1,6 @@
 #include "Shader.hpp"
 #include <iostream>
+#include <glm/gtc/type_ptr.hpp>
 
 Shader::Shader (const char *vertexCode, const char *fragmentCode)
     : uniformHandles_ (),
@@ -24,14 +25,15 @@ GLuint Shader::GetAttributeHandle (std::size_t nameHash) const
     return attributeHandles_.at (nameHash);
 }
 
-void Shader::SetVec3f (std::size_t nameHash, vec3 value)
+void Shader::SetVec3f (std::size_t nameHash, glm::vec3 value)
 {
     glUniform3f (uniformHandles_.at (nameHash), value[0], value[1], value[2]);
 }
 
-void Shader::SetMat4x4f (std::size_t nameHash, mat4x4 value)
+void Shader::SetMat4x4f (std::size_t nameHash, glm::mat4x4 value)
 {
-    glUniformMatrix4fv (uniformHandles_.at (nameHash), 1, GL_FALSE, (const GLfloat *) value);
+    float *valuePtr = glm::value_ptr (value);
+    glUniformMatrix4fv (uniformHandles_.at (nameHash), 1, GL_FALSE, valuePtr);
 }
 
 void Shader::SetupProgram (const char *vertexCode, const char *fragmentCode)

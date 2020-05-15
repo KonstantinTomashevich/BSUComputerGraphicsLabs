@@ -12,5 +12,5 @@ protected:
     void DoApply () override;
 
 private:
-    vec3 diffuseColor_;
+    glm::vec3 diffuseColor_;
 };

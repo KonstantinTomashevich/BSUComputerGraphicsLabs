@@ -1,14 +1,17 @@
 #include "PositionedObject.hpp"
 #include "Constants.hpp"
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/matrix_operation.hpp>
 
 PositionedObject::PositionedObject ()
 {
-    SetLocalPosition (0.0f, 0.0f, 0.0f);
-    SetLocalRotation (0.0f, 0.0f, 0.0f);
-    SetLocalScale (1.0f, 1.0f, 1.0f);
+    SetLocalPosition ({0, 0, 0});
+    SetLocalRotation ({0, 0, 0});
+    SetLocalScale ({1, 1, 1});
 }
 
-const mat4x4 &PositionedObject::GetMatrix ()
+const glm::mat4x4 &PositionedObject::GetMatrix ()
 {
     if (matrixDirty_)
     {
@@ -18,62 +21,42 @@ const mat4x4 &PositionedObject::GetMatrix ()
     return modelSpaceMatrix_;
 }
 
-const vec3 &PositionedObject::GetLocalPosition () const
+const glm::vec3 &PositionedObject::GetLocalPosition () const
 {
     return position_;
 }
 
-const quat &PositionedObject::GetLocalRotation () const
+const glm::quat &PositionedObject::GetLocalRotation () const
 {
     return rotation_;
 }
 
-const vec3 &PositionedObject::GetLocalScale () const
+const glm::vec3 &PositionedObject::GetLocalScale () const
 {
     return scale_;
 }
 
-void PositionedObject::SetLocalPosition (float x, float y, float z)
+void PositionedObject::SetLocalPosition (const glm::vec3 &position)
 {
-    position_[0] = x;
-    position_[1] = y;
-    position_[2] = z;
+    position_ = position;
     MarkDirty ();
 }
 
-void PositionedObject::SetLocalRotation (float x, float y, float z)
+void PositionedObject::SetLocalRotation (const glm::vec3 &euler)
 {
-    quat q1, q2;
-    quat_identity (rotation_);
-    quat_identity (q1);
-    quat_identity (q1);
-
-    quat_rotate (rotation_, x, (float *) xAxis);
-    quat_rotate (q1, y, (float *) yAxis);
-
-    quat_mul (q2, rotation_, q1);
-    quat_rotate (q1, z, (float *) zAxis);
-
-    quat_mul (rotation_, q2, q1);
+    rotation_ = glm::quat (euler);
     MarkDirty ();
 }
 
-void PositionedObject::SetLocalRotation (float x, float y, float z, float w)
+void PositionedObject::SetLocalRotation (const glm::quat &rotation)
 {
-    rotation_[0] = x;
-    rotation_[1] = y;
-    rotation_[2] = z;
-    rotation_[3] = w;
-
-    quat_norm (rotation_, rotation_);
+    rotation_ = rotation;
     MarkDirty ();
 }
 
-void PositionedObject::SetLocalScale (float x, float y, float z)
+void PositionedObject::SetLocalScale (const glm::vec3 &scale)
 {
-    scale_[0] = x;
-    scale_[1] = y;
-    scale_[2] = z;
+    scale_ = scale;
     MarkDirty ();
 }
 
@@ -84,12 +67,9 @@ void PositionedObject::MarkDirty ()
 
 void PositionedObject::RecalculateMatrix ()
 {
-    mat4x4_identity (modelSpaceMatrix_);
-    mat4x4_translate (modelSpaceMatrix_, position_[0], position_[1], position_[2]);
-    mat4x4_scale_aniso (modelSpaceMatrix_, modelSpaceMatrix_, scale_[0], scale_[1], scale_[2]);
-
-    mat4x4 rotationMatrix;
-    mat4x4_from_quat (rotationMatrix, rotation_);
-    mat4x4_mul (modelSpaceMatrix_, modelSpaceMatrix_, rotationMatrix);
+    modelSpaceMatrix_ = glm::identity <glm::mat4x4> ();
+    modelSpaceMatrix_ = glm::translate (modelSpaceMatrix_, position_);
+    modelSpaceMatrix_ *= glm::toMat4(rotation_);
+    modelSpaceMatrix_ = glm::scale (modelSpaceMatrix_, scale_);
     matrixDirty_ = false;
 }

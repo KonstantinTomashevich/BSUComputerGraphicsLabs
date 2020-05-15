@@ -1,7 +1,8 @@
 #pragma once
 #include <glad/glad.h>
 #include <unordered_map>
-#include <linmath.h>
+#include <glm/vec3.hpp>
+#include <glm/mat4x4.hpp>
 
 class Shader
 {
@@ -12,8 +13,8 @@ public:
     void Apply () const;
     GLuint GetAttributeHandle (std::size_t nameHash) const;
 
-    void SetVec3f (std::size_t nameHash, vec3 value);
-    void SetMat4x4f (std::size_t nameHash, mat4x4 value);
+    void SetVec3f (std::size_t nameHash, glm::vec3 value);
+    void SetMat4x4f (std::size_t nameHash, glm::mat4x4 value);
 
 private:
     void SetupProgram (const char *vertexCode, const char *fragmentCode);

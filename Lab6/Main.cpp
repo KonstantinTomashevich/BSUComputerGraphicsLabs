@@ -14,10 +14,9 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-#include <linmath.h>
-
 #include <cstdlib>
 #include <cstdio>
+#include <glm/gtc/type_ptr.hpp>
 
 #define CAMERA_MOVE_SPEED 5.0f
 
@@ -26,7 +25,6 @@ struct
     double deltaTime = 0.0;
     AbstractCamera *activeCamera = nullptr;
     ImGuiIO *imGuiIO_ = nullptr;
-    vec3 symbolEulerRotation = {0};
 } Context;
 
 static void ErrorCallback (int error, const char *description)
@@ -44,11 +42,11 @@ static void KeyCallback (GLFWwindow *window, int key, int scancode, int action, 
 
 static void MoveCamera (int xDir, int yDir, int zDir)
 {
-    const vec3 &cameraPosition = Context.activeCamera->GetLocalPosition ();
-    Context.activeCamera->SetLocalPosition (
+    const glm::vec3 &cameraPosition = Context.activeCamera->GetLocalPosition ();
+    Context.activeCamera->SetLocalPosition (glm::vec3 (
         cameraPosition[0] + (float) Context.deltaTime * (float) xDir * CAMERA_MOVE_SPEED,
         cameraPosition[1] + (float) Context.deltaTime * (float) yDir * CAMERA_MOVE_SPEED,
-        cameraPosition[2] + (float) Context.deltaTime * (float) zDir * CAMERA_MOVE_SPEED);
+        cameraPosition[2] + (float) Context.deltaTime * (float) zDir * CAMERA_MOVE_SPEED));
 }
 
 int main (int argumentCount, char **arguments)
@@ -78,13 +76,13 @@ int main (int argumentCount, char **arguments)
     glEnable (GL_DEPTH_TEST);
 
     IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    Context.imGuiIO_ = &ImGui::GetIO();
+    ImGui::CreateContext ();
+    Context.imGuiIO_ = &ImGui::GetIO ();
 
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 150");
-    ImGui::StyleColorsDark();
-    Context.imGuiIO_->Fonts->AddFontDefault();
+    ImGui_ImplGlfw_InitForOpenGL (window, true);
+    ImGui_ImplOpenGL3_Init ("#version 150");
+    ImGui::StyleColorsDark ();
+    Context.imGuiIO_->Fonts->AddFontDefault ();
 
     auto *shader = new Shader (vertexColorVertexShader, vertexColorFragmentShader);
     EmptyMaterial material;
@@ -95,20 +93,17 @@ int main (int argumentCount, char **arguments)
     gridDrawable->SetLinkedGeometry (gridGeometry);
     gridDrawable->SetLinkedMaterial (&material);
 
-    gridDrawable->SetLocalPosition (0.0f, 0.0f, 0.0f);
-    gridDrawable->SetLocalScale (10.0f, 10.0f, 10.0f);
+    gridDrawable->SetLocalPosition ({0.0f, 0.0f, 0.0f});
+    gridDrawable->SetLocalScale ({10.0f, 10.0f, 10.0f});
 
     AbstractGeometry *symbolGeometry = GenerateTSymbol ();
     auto *symbolDrawable = new Drawable ();
     symbolDrawable->SetLinkedGeometry (symbolGeometry);
     symbolDrawable->SetLinkedMaterial (&material);
 
-    symbolDrawable->SetLocalRotation (
-        Context.symbolEulerRotation[0], Context.symbolEulerRotation[1], Context.symbolEulerRotation[2]);
-
     auto *camera = new PerspectiveCamera (M_PI / 3, 0.01f, 100.0f);
-    camera->SetLocalPosition (0.0f, -10.0f, 5.0f);
-    camera->SetLocalRotation (M_PI / 4, 0.0f, 0.0f);
+    camera->SetLocalPosition ({0.0f, -10.0f, 5.0f});
+    camera->SetLocalRotation ({M_PI / 4, 0.0f, 0.0f});
     Context.activeCamera = camera;
 
     double lastFrameTime = glfwGetTime ();
@@ -133,42 +128,37 @@ int main (int argumentCount, char **arguments)
             );
         }
 
-        mat4x4 projection;
+        glm::mat4x4 projection = glm::identity <glm::mat4x4> ();
         camera->GetViewMatrix (width, height, projection);
 
         gridDrawable->Draw (projection);
         symbolDrawable->Draw (projection);
 
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+        ImGui_ImplOpenGL3_NewFrame ();
+        ImGui_ImplGlfw_NewFrame ();
+        ImGui::NewFrame ();
 
-        ImGui::SetNextWindowPos (ImVec2(0, 0), ImGuiCond_Appearing);
-        ImGui::Begin("Configuration Window");
+        ImGui::SetNextWindowPos (ImVec2 (0, 0), ImGuiCond_Appearing);
+        ImGui::Begin ("Configuration Window");
 
         if (ImGui::CollapsingHeader ("Transform"))
         {
-            vec3 position = {0};
-            quat qRotation = {0};
-            vec3 scale = {0};
+            glm::vec3 position = symbolDrawable->GetLocalPosition ();
+            glm::quat qRotation = symbolDrawable->GetLocalRotation ();
+            glm::vec3 scale = symbolDrawable->GetLocalScale ();
 
-            vec3_add (position, position, symbolDrawable->GetLocalPosition ());
-            quat_add (qRotation, qRotation, (float *) symbolDrawable->GetLocalRotation ());
-            vec3_add (scale, scale, symbolDrawable->GetLocalScale ());
+            ImGui::InputFloat3 ("Position: ", glm::value_ptr(position));
+            ImGui::InputFloat4 ("Rotation: ", glm::value_ptr(qRotation));
+            ImGui::InputFloat3 ("Scale: ", glm::value_ptr(scale));
 
-            ImGui::InputFloat3 ("Position: ", position);
-            ImGui::InputFloat4 ("Rotation: ", qRotation);
-            ImGui::InputFloat3 ("Scale: ", scale);
-
-            symbolDrawable->SetLocalPosition (position[0], position[1], position[2]);
-            symbolDrawable->SetLocalRotation (qRotation[0], qRotation[1], qRotation[2]);
-            symbolDrawable->SetLocalScale (scale[0], scale[1], scale[2]);
+            symbolDrawable->SetLocalPosition (position);
+            symbolDrawable->SetLocalRotation (qRotation);
+            symbolDrawable->SetLocalScale (scale);
         }
 
-        ImGui::End();
-
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        ImGui::End ();
+        ImGui::Render ();
+        ImGui_ImplOpenGL3_RenderDrawData (ImGui::GetDrawData ());
 
         glfwSwapBuffers (window);
         glfwPollEvents ();
@@ -183,9 +173,9 @@ int main (int argumentCount, char **arguments)
     delete gridDrawable;
     delete symbolDrawable;
 
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
+    ImGui_ImplOpenGL3_Shutdown ();
+    ImGui_ImplGlfw_Shutdown ();
+    ImGui::DestroyContext ();
 
     glfwDestroyWindow (window);
     glfwTerminate ();

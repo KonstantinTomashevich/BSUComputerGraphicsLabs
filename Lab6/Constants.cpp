@@ -45,9 +45,3 @@ const std::size_t diffuseColorUniformNameHash = std::hash <std::string> {} ("vDi
 const std::size_t positionAttributeNameHash = std::hash <std::string> {} ("vPos");
 
 const std::size_t colorAttributeNameHash = std::hash <std::string> {} ("vCol");
-
-const vec3 xAxis = {1, 0, 0};
-
-const vec3 yAxis = {0, 1, 0};
-
-const vec3 zAxis = {0, 0, 1};

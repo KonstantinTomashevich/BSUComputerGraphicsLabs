@@ -10,7 +10,7 @@ public:
     Drawable ();
     virtual ~Drawable () = default;
 
-    void Draw (const mat4x4 &viewSpace);
+    void Draw (const glm::mat4x4 &viewSpace);
     AbstractGeometry *GetLinkedGeometry () const;
     void SetLinkedGeometry (AbstractGeometry *linkedGeometry);
     AbstractMaterial *GetLinkedMaterial () const;

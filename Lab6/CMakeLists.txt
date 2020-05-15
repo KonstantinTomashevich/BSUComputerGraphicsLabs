@@ -8,7 +8,8 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(../glfw ${CMAKE_BINARY_DIR}/glfw_build)
 add_subdirectory(../glad ${CMAKE_BINARY_DIR}/glad_build)
-include_directories(../glfw/deps ../imgui)
+add_subdirectory(../glm ${CMAKE_BINARY_DIR}/glm_build)
+include_directories(../imgui)
 
 add_executable(Lab6 Main.cpp Constants.cpp Constants.hpp
         Shader.cpp Shader.hpp AbstractMaterial.hpp DiffuseColorMaterial.cpp DiffuseColorMaterial.hpp
@@ -21,4 +22,4 @@ add_executable(Lab6 Main.cpp Constants.cpp Constants.hpp
         ../imgui/examples/imgui_impl_glfw.cpp ../imgui/examples/imgui_impl_glfw.h)
 
 target_compile_definitions(Lab6 PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLAD)
-target_link_libraries(Lab6 glfw glad m)
+target_link_libraries(Lab6 glfw glad glm m)

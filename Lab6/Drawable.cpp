@@ -7,7 +7,7 @@ Drawable::Drawable ()
 {
 }
 
-void Drawable::Draw (const mat4x4 &viewSpace)
+void Drawable::Draw (const glm::mat4x4 &viewSpace)
 {
     if (linkedGeometry_ == nullptr)
     {
@@ -19,9 +19,8 @@ void Drawable::Draw (const mat4x4 &viewSpace)
         throw std::runtime_error ("Found attempt to call Draw on Drawable without material!");
     }
 
-    mat4x4 mvp;
-    const mat4x4 &modelSpace = GetMatrix ();
-    mat4x4_mul (mvp, (vec4 *) viewSpace, (vec4 *) modelSpace);
+    const glm::mat4x4 &modelSpace = GetMatrix ();
+    glm::mat4 mvp = viewSpace * modelSpace;
 
     // TODO: We could use something like renderer context to stop reapplying same materials and shaders.
     linkedMaterial_->Apply ();

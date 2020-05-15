@@ -1,13 +1,17 @@
 #include "AbstractCamera.hpp"
+#include <glm/gtx/matrix_operation.hpp>
+
+#include "../glfw/deps/linmath.h"
+#include <glm/gtc/type_ptr.hpp>
 
 AbstractCamera::AbstractCamera ()
     : previousViewportWidth_ (0),
       previousViewportHeight_ (0)
 {
-    mat4x4_identity (projection_);
+    projection_ = glm::identity <glm::mat4x4> ();
 }
 
-void AbstractCamera::GetViewMatrix (unsigned int viewportWidth, unsigned int viewportHeight, const mat4x4 &output)
+void AbstractCamera::GetViewMatrix (unsigned int viewportWidth, unsigned int viewportHeight, glm::mat4x4 &output)
 {
     if (projectionDirty_ || viewportWidth != previousViewportWidth_ || viewportHeight != previousViewportHeight_)
     {
@@ -18,6 +22,8 @@ void AbstractCamera::GetViewMatrix (unsigned int viewportWidth, unsigned int vie
     }
 
     mat4x4 viewSpace;
-    mat4x4_invert (viewSpace, (vec4 *) GetMatrix ());
-    mat4x4_mul ((vec4 *) output, projection_, viewSpace);
+    mat4x4_invert (viewSpace, (vec4 *) glm::value_ptr (GetMatrix ()));
+    mat4x4 out;
+    mat4x4_mul (out, (vec4 *) glm::value_ptr (projection_), viewSpace);
+    output = projection_ * glm::inverse (GetMatrix ());
 }

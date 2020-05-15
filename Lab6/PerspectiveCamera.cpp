@@ -1,7 +1,3 @@
-//
-// Created by Konstant on 5/10/2020.
-//
-
 #include "PerspectiveCamera.hpp"
 
 PerspectiveCamera::PerspectiveCamera (float fov, float near, float far)
@@ -12,9 +8,9 @@ PerspectiveCamera::PerspectiveCamera (float fov, float near, float far)
 }
 
 void PerspectiveCamera::RecalculateProjection (
-    unsigned int viewportWidth, unsigned int viewportHeight, const mat4x4 &output)
+    unsigned int viewportWidth, unsigned int viewportHeight, glm::mat4x4 &output)
 {
-    mat4x4_perspective ((vec4 *) output, fov_, (float) viewportWidth / (float) viewportHeight, near_, far_);
+    output = glm::perspective (fov_, (float) viewportWidth / (float) viewportHeight, near_, far_);
 }
 
 float PerspectiveCamera::GetFov () const

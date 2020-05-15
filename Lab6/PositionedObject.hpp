@@ -1,5 +1,7 @@
 #pragma once
-#include <linmath.h>
+#include <glm/vec3.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/ext/quaternion_float.hpp>
 
 // TODO: Rewite as node for scene hierarchy support.
 class PositionedObject
@@ -8,24 +10,24 @@ public:
     PositionedObject ();
     virtual ~PositionedObject () = default;
 
-    const mat4x4 &GetMatrix ();
-    const vec3 &GetLocalPosition () const;
-    const quat &GetLocalRotation () const;
-    const vec3 &GetLocalScale () const;
+    const glm::mat4x4 &GetMatrix ();
+    const glm::vec3 &GetLocalPosition () const;
+    const glm::quat &GetLocalRotation () const;
+    const glm::vec3 &GetLocalScale () const;
 
-    void SetLocalPosition (float x, float y, float z);
-    void SetLocalRotation (float x, float y, float z);
-    void SetLocalRotation (float x, float y, float z, float w);
-    void SetLocalScale (float x, float y, float z);
+    void SetLocalPosition (const glm::vec3 &position);
+    void SetLocalRotation (const glm::vec3 &euler);
+    void SetLocalRotation (const glm::quat &rotation);
+    void SetLocalScale (const glm::vec3 &scale);
 
 private:
     void MarkDirty ();
     void RecalculateMatrix ();
 
-    vec3 position_;
-    quat rotation_;
-    vec3 scale_;
+    glm::vec3 position_;
+    glm::quat rotation_;
+    glm:: vec3 scale_;
 
     bool matrixDirty_;
-    mat4x4 modelSpaceMatrix_;
+    glm::mat4x4 modelSpaceMatrix_;
 };
