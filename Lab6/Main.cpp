@@ -26,6 +26,7 @@ struct
     double deltaTime = 0.0;
     AbstractCamera *activeCamera = nullptr;
     ImGuiIO *imGuiIO_ = nullptr;
+    vec3 symbolEulerRotation = {0};
 } Context;
 
 static void ErrorCallback (int error, const char *description)
@@ -102,6 +103,9 @@ int main (int argumentCount, char **arguments)
     symbolDrawable->SetLinkedGeometry (symbolGeometry);
     symbolDrawable->SetLinkedMaterial (&material);
 
+    symbolDrawable->SetLocalRotation (
+        Context.symbolEulerRotation[0], Context.symbolEulerRotation[1], Context.symbolEulerRotation[2]);
+
     auto *camera = new PerspectiveCamera (M_PI / 3, 0.01f, 100.0f);
     camera->SetLocalPosition (0.0f, -10.0f, 5.0f);
     camera->SetLocalRotation (M_PI / 4, 0.0f, 0.0f);
@@ -139,8 +143,28 @@ int main (int argumentCount, char **arguments)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::Begin("Demo window");
-        ImGui::Button("Hello!");
+        ImGui::SetNextWindowPos (ImVec2(0, 0), ImGuiCond_Appearing);
+        ImGui::Begin("Configuration Window");
+
+        if (ImGui::CollapsingHeader ("Transform"))
+        {
+            vec3 position = {0};
+            quat qRotation = {0};
+            vec3 scale = {0};
+
+            vec3_add (position, position, symbolDrawable->GetLocalPosition ());
+            quat_add (qRotation, qRotation, (float *) symbolDrawable->GetLocalRotation ());
+            vec3_add (scale, scale, symbolDrawable->GetLocalScale ());
+
+            ImGui::InputFloat3 ("Position: ", position);
+            ImGui::InputFloat4 ("Rotation: ", qRotation);
+            ImGui::InputFloat3 ("Scale: ", scale);
+
+            symbolDrawable->SetLocalPosition (position[0], position[1], position[2]);
+            symbolDrawable->SetLocalRotation (qRotation[0], qRotation[1], qRotation[2]);
+            symbolDrawable->SetLocalScale (scale[0], scale[1], scale[2]);
+        }
+
         ImGui::End();
 
         ImGui::Render();
