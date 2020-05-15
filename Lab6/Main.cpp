@@ -145,12 +145,18 @@ int main (int argumentCount, char **arguments)
         {
             glm::vec3 position = symbolDrawable->GetLocalPosition ();
             glm::quat qRotation = symbolDrawable->GetLocalRotation ();
-            glm::vec3 scale = symbolDrawable->GetLocalScale ();
+            glm::vec3 eulerRotation = glm::degrees (glm::eulerAngles (qRotation));
 
+            glm::vec3 scale = symbolDrawable->GetLocalScale ();
             ImGui::InputFloat3 ("Position: ", glm::value_ptr(position));
             ImGui::InputFloat4 ("Rotation: ", glm::value_ptr(qRotation));
-            ImGui::InputFloat3 ("Scale: ", glm::value_ptr(scale));
 
+            if (ImGui::InputFloat3 ("Rotation (euler, degrees): ", glm::value_ptr(eulerRotation)))
+            {
+                qRotation = glm::quat (glm::radians(eulerRotation));
+            }
+
+            ImGui::InputFloat3 ("Scale: ", glm::value_ptr(scale));
             symbolDrawable->SetLocalPosition (position);
             symbolDrawable->SetLocalRotation (qRotation);
             symbolDrawable->SetLocalScale (scale);
