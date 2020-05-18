@@ -19,6 +19,7 @@
 #include <cstdio>
 
 #define CAMERA_MOVE_SPEED 5.0f
+#define CAMERA_ROTATION_SPEED (M_PI / 4.0f)
 #define GRID_SIZE 10.0f
 
 struct
@@ -55,7 +56,7 @@ static void SetupScene ();
 static void SetupImGUI ();
 static void SetupGLFW ();
 
-static void RenderScene(const glm::mat4x4 &projection);
+static void RenderScene (const glm::mat4x4 &projection);
 static void UpdateCamera ();
 static void UpdateViewport (glm::mat4x4 &projectionOutput);
 static void RenderUI (const glm::mat4x4 &projection);
@@ -103,10 +104,13 @@ static void KeyCallback (GLFWwindow *window, int key, int scancode, int action, 
 static void MoveCamera (int xDir, int yDir, int zDir)
 {
     const glm::vec3 &cameraPosition = Context.activeCamera->GetLocalPosition ();
-    Context.activeCamera->SetLocalPosition (glm::vec3 (
-        cameraPosition[0] + (float) Context.deltaTime * (float) xDir * CAMERA_MOVE_SPEED,
-        cameraPosition[1] + (float) Context.deltaTime * (float) yDir * CAMERA_MOVE_SPEED,
-        cameraPosition[2] + (float) Context.deltaTime * (float) zDir * CAMERA_MOVE_SPEED));
+    glm::vec3 delta = {xDir, yDir, zDir};
+    glm::quat zRotation = glm::quat(glm::vec3 (0.0f, 0.0f,
+        glm::eulerAngles (Context.activeCamera->GetLocalRotation ()).z));
+
+    delta *= (float) Context.deltaTime * CAMERA_MOVE_SPEED;
+    delta = zRotation * delta;
+    Context.activeCamera->SetLocalPosition (Context.activeCamera->GetLocalPosition () + delta);
 }
 
 static void MatrixToString (const glm::mat4x4 &matrix, std::string &string)
@@ -199,7 +203,7 @@ static void SetupGLFW ()
     glfwWindowHint (GLFW_CONTEXT_VERSION_MINOR, 0);
 
     Context.window = glfwCreateWindow (1200, 900,
-        "Konstantin Tomashevich CG Lab 6", NULL, NULL);
+                                       "Konstantin Tomashevich CG Lab 6", NULL, NULL);
 
     if (!Context.window)
     {
@@ -244,6 +248,14 @@ static void UpdateCamera ()
             Context.imGuiIO_->KeysDown[GLFW_KEY_S] ? -1 : (Context.imGuiIO_->KeysDown[GLFW_KEY_W] ? 1 : 0),
             Context.imGuiIO_->KeysDown[GLFW_KEY_Q] ? -1 : (Context.imGuiIO_->KeysDown[GLFW_KEY_E] ? 1 : 0)
         );
+
+        int rotateY = Context.imGuiIO_->KeysDown[GLFW_KEY_R] ? 1 : (Context.imGuiIO_->KeysDown[GLFW_KEY_T] ? -1 : 0);
+        if (rotateY != 0)
+        {
+            glm::quat delta = glm::quat (glm::vec3 (0.0f, 0.0f,
+                                                    (float) rotateY * Context.deltaTime * CAMERA_ROTATION_SPEED));
+            Context.activeCamera->SetLocalRotation (delta * Context.activeCamera->GetLocalRotation ());
+        }
     }
 }
 
