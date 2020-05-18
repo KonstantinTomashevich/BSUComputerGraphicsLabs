@@ -6,6 +6,7 @@
 #include "PerspectiveCamera.hpp"
 #include "EmptyMaterial.hpp"
 #include "Models.hpp"
+#include "OrthographicCamera.hpp"
 
 #include <imgui.h>
 #include <examples/imgui_impl_glfw.h>
@@ -22,16 +23,35 @@
 #define CAMERA_ROTATION_SPEED (M_PI / 4.0f)
 #define GRID_SIZE 10.0f
 
+#define PROJECTION_FOV M_PI / 3
+#define PROJECTION_CAMERA_PITCH M_PI / 4
+
+#define ORTHOGRAPHIC_CAMERA_OFFSET 1.0f
+#define ORTHOGRAPHIC_HEIGHT 20.0f
+
+#define NEAR 0.01f
+#define FAR 100.0f
+
+#define CAMERA_COUNT 4
+#define PERSPECTIVE_CAMERA_INDEX 0
+
+typedef struct
+{
+    AbstractCamera *camera;
+    const char *name;
+} CameraInfo;
+
 struct
 {
     double deltaTime = 0.0;
     ImGuiIO *imGuiIO_ = nullptr;
     GLFWwindow *window = nullptr;
 
-    AbstractCamera *activeCamera = nullptr;
     Shader *shader = nullptr;
     AbstractMaterial *material = nullptr;
-    AbstractCamera *perspectiveCamera = nullptr;
+
+    int selectedCamera = 0;
+    CameraInfo cameras[4] = {nullptr};
 
     AbstractGeometry *symbolGeometry = nullptr;
     AbstractGeometry *gridGeometry = nullptr;
@@ -103,14 +123,15 @@ static void KeyCallback (GLFWwindow *window, int key, int scancode, int action, 
 
 static void MoveCamera (int xDir, int yDir, int zDir)
 {
-    const glm::vec3 &cameraPosition = Context.activeCamera->GetLocalPosition ();
+    AbstractCamera *activeCamera = Context.cameras[Context.selectedCamera].camera;
+    const glm::vec3 &cameraPosition = activeCamera->GetLocalPosition ();
     glm::vec3 delta = {xDir, yDir, zDir};
-    glm::quat zRotation = glm::quat(glm::vec3 (0.0f, 0.0f,
-        glm::eulerAngles (Context.activeCamera->GetLocalRotation ()).z));
+    glm::quat zRotation = glm::quat (glm::vec3 (0.0f, 0.0f,
+                                                glm::eulerAngles (activeCamera->GetLocalRotation ()).z));
 
     delta *= (float) Context.deltaTime * CAMERA_MOVE_SPEED;
     delta = zRotation * delta;
-    Context.activeCamera->SetLocalPosition (Context.activeCamera->GetLocalPosition () + delta);
+    activeCamera->SetLocalPosition (activeCamera->GetLocalPosition () + delta);
 }
 
 static void MatrixToString (const glm::mat4x4 &matrix, std::string &string)
@@ -133,7 +154,11 @@ static void FreeResources ()
 {
     delete Context.shader;
     delete Context.material;
-    delete Context.perspectiveCamera;
+
+    for (int index = 0; index < CAMERA_COUNT; ++index)
+    {
+        delete Context.cameras[index].camera;
+    }
 
     delete Context.symbolGeometry;
     delete Context.gridGeometry;
@@ -172,10 +197,32 @@ static void SetupScene ()
     Context.symbolGeometry = GenerateTSymbol ();
     Context.symbolDrawable = new Drawable (Context.symbolGeometry, Context.material);
 
-    Context.perspectiveCamera = new PerspectiveCamera (M_PI / 3, 0.01f, 100.0f);
-    Context.perspectiveCamera->SetLocalPosition ({0.0f, -10.0f, 5.0f});
-    Context.perspectiveCamera->SetLocalRotation ({M_PI / 4, 0.0f, 0.0f});
-    Context.activeCamera = Context.perspectiveCamera;
+    AbstractCamera *perspectiveCamera = new PerspectiveCamera (PROJECTION_FOV, NEAR, FAR);
+    perspectiveCamera->SetLocalPosition ({0.0f, -10.0f, 5.0f});
+    perspectiveCamera->SetLocalRotation ({PROJECTION_CAMERA_PITCH, 0.0f, 0.0f});
+
+    AbstractCamera *orthographicOXYCamera = new OrthographicCamera (ORTHOGRAPHIC_HEIGHT, NEAR, FAR);
+    orthographicOXYCamera->SetLocalPosition ({0.0f, 0.0f, ORTHOGRAPHIC_CAMERA_OFFSET});
+
+    AbstractCamera *orthographicOXZCamera = new OrthographicCamera (ORTHOGRAPHIC_HEIGHT, NEAR, FAR);
+    orthographicOXZCamera->SetLocalPosition ({0.0f, -ORTHOGRAPHIC_CAMERA_OFFSET, 0.0f});
+    orthographicOXZCamera->SetLocalRotation ({M_PI / 2, 0.0f, 0.0f});
+
+    AbstractCamera *orthographicOYZCamera = new OrthographicCamera (ORTHOGRAPHIC_HEIGHT, NEAR, FAR);
+    orthographicOYZCamera->SetLocalPosition ({ORTHOGRAPHIC_CAMERA_OFFSET, 0.0f, 0.0f});
+    orthographicOYZCamera->SetLocalRotation ({M_PI / 2, 0.0f, M_PI / 2});
+
+    Context.cameras[0].camera = perspectiveCamera;
+    Context.cameras[0].name = "Perspective";
+
+    Context.cameras[1].camera = orthographicOXYCamera;
+    Context.cameras[1].name = "Orthographic XY (Y up)";
+
+    Context.cameras[2].camera = orthographicOXZCamera;
+    Context.cameras[2].name = "Orthographic XZ (Z up)";
+
+    Context.cameras[3].camera = orthographicOYZCamera;
+    Context.cameras[3].name = "Orthographic YZ (Z up)";
 }
 
 static void SetupImGUI ()
@@ -241,6 +288,7 @@ static void RenderScene (const glm::mat4x4 &projection)
 
 static void UpdateCamera ()
 {
+    AbstractCamera *activeCamera = Context.cameras[Context.selectedCamera].camera;
     if (!Context.imGuiIO_->WantCaptureKeyboard)
     {
         MoveCamera (
@@ -249,12 +297,18 @@ static void UpdateCamera ()
             Context.imGuiIO_->KeysDown[GLFW_KEY_Q] ? -1 : (Context.imGuiIO_->KeysDown[GLFW_KEY_E] ? 1 : 0)
         );
 
-        int rotateY = Context.imGuiIO_->KeysDown[GLFW_KEY_R] ? 1 : (Context.imGuiIO_->KeysDown[GLFW_KEY_T] ? -1 : 0);
-        if (rotateY != 0)
+        if (Context.selectedCamera == PERSPECTIVE_CAMERA_INDEX)
         {
-            glm::quat delta = glm::quat (glm::vec3 (0.0f, 0.0f,
-                                                    (float) rotateY * Context.deltaTime * CAMERA_ROTATION_SPEED));
-            Context.activeCamera->SetLocalRotation (delta * Context.activeCamera->GetLocalRotation ());
+            int rotateY = Context.imGuiIO_->KeysDown[GLFW_KEY_R] ? 1 : (
+                Context.imGuiIO_->KeysDown[GLFW_KEY_T] ? -1 : 0);
+
+            if (rotateY != 0)
+            {
+                glm::quat delta = glm::quat (
+                    glm::vec3 (0.0f, 0.0f,
+                               (float) rotateY * Context.deltaTime * CAMERA_ROTATION_SPEED));
+                activeCamera->SetLocalRotation (delta * activeCamera->GetLocalRotation ());
+            }
         }
     }
 }
@@ -266,7 +320,7 @@ static void UpdateViewport (glm::mat4x4 &projectionOutput)
 
     glViewport (0, 0, width, height);
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    Context.activeCamera->GetViewMatrix (width, height, projectionOutput);
+    Context.cameras[Context.selectedCamera].camera->GetViewMatrix (width, height, projectionOutput);
 }
 
 static void RenderUI (const glm::mat4x4 &projection)
@@ -304,6 +358,14 @@ static void RenderUI (const glm::mat4x4 &projection)
         ImGui::Checkbox ("OXY", &Context.showOXYGrid);
         ImGui::Checkbox ("OXZ", &Context.showOXZGrid);
         ImGui::Checkbox ("OYZ", &Context.showOYZGrid);
+    }
+
+    if (ImGui::CollapsingHeader ("Cameras"))
+    {
+        for (int index = 0; index < CAMERA_COUNT; ++index)
+        {
+            ImGui::RadioButton (Context.cameras[index].name, &Context.selectedCamera, index);
+        }
     }
 
     std::string stringBuffer;

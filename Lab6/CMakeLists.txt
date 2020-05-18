@@ -13,10 +13,12 @@ include_directories(../imgui)
 
 add_executable(Lab6 Main.cpp Constants.cpp Constants.hpp
         Shader.cpp Shader.hpp AbstractMaterial.hpp DiffuseColorMaterial.cpp DiffuseColorMaterial.hpp
-        AbstractGeometry.hpp Geometry.cpp Geometry.hpp AbstractGeometry.cpp PositionedObject.cpp PositionedObject.hpp
-        Drawable.cpp Drawable.hpp AbstractMaterial.cpp AbstractCamera.cpp AbstractCamera.hpp
+        AbstractGeometry.hpp AbstractGeometry.cpp Geometry.cpp Geometry.hpp
+        PositionedObject.cpp PositionedObject.hpp Drawable.cpp Drawable.hpp
+        AbstractMaterial.cpp AbstractCamera.cpp AbstractCamera.hpp
         PerspectiveCamera.cpp PerspectiveCamera.hpp Vertex.cpp Vertex.hpp Vertex.cpp
-        EmptyMaterial.cpp EmptyMaterial.hpp Models.cpp Models.hpp ../imgui/imgui.cpp ../imgui/imgui.h
+        EmptyMaterial.cpp EmptyMaterial.hpp Models.cpp Models.hpp
+        OrthographicCamera.cpp OrthographicCamera.hpp ../imgui/imgui.cpp ../imgui/imgui.h
         ../imgui/imgui_draw.cpp ../imgui/imgui_widgets.cpp ../imgui/imgui_internal.h
         ../imgui/examples/imgui_impl_opengl3.cpp ../imgui/examples/imgui_impl_opengl3.h
         ../imgui/examples/imgui_impl_glfw.cpp ../imgui/examples/imgui_impl_glfw.h)
