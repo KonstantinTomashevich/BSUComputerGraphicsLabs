@@ -7,6 +7,12 @@ Drawable::Drawable ()
 {
 }
 
+Drawable::Drawable (AbstractGeometry *linkedGeometry, AbstractMaterial *linkedMaterial)
+    : linkedGeometry_ (linkedGeometry),
+      linkedMaterial_ (linkedMaterial)
+{
+}
+
 void Drawable::Draw (const glm::mat4x4 &viewSpace)
 {
     if (linkedGeometry_ == nullptr)

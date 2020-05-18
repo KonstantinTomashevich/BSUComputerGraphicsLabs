@@ -8,6 +8,7 @@ class Drawable : public PositionedObject
 {
 public:
     Drawable ();
+    Drawable (AbstractGeometry *linkedGeometry, AbstractMaterial *linkedMaterial);
     virtual ~Drawable () = default;
 
     void Draw (const glm::mat4x4 &viewSpace);

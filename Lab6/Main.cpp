@@ -19,6 +19,7 @@
 #include <cstdio>
 
 #define CAMERA_MOVE_SPEED 5.0f
+#define GRID_SIZE 10.0f
 
 struct
 {
@@ -38,6 +39,10 @@ struct
     Drawable *gridOXYDrawable = nullptr;
     Drawable *gridOXZDrawable = nullptr;
     Drawable *gridOYZDrawable = nullptr;
+
+    bool showOXYGrid = true;
+    bool showOXZGrid = false;
+    bool showOYZGrid = false;
 } Context;
 
 static void ErrorCallback (int error, const char *description);
@@ -149,15 +154,19 @@ static void SetupScene ()
     Context.material->SetLinkedShader (Context.shader);
 
     Context.gridGeometry = Generate2DGrid (21, 21, {150, 0, 0});
-    Context.gridOXYDrawable = new Drawable ();
-    Context.gridOXYDrawable->SetLinkedGeometry (Context.gridGeometry);
-    Context.gridOXYDrawable->SetLinkedMaterial (Context.material);
-    Context.gridOXYDrawable->SetLocalScale ({10.0f, 10.0f, 10.0f});
+    Context.gridOXYDrawable = new Drawable (Context.gridGeometry, Context.material);
+    Context.gridOXYDrawable->SetLocalScale ({GRID_SIZE, GRID_SIZE, GRID_SIZE});
+
+    Context.gridOXZDrawable = new Drawable (Context.gridGeometry, Context.material);
+    Context.gridOXZDrawable->SetLocalScale ({GRID_SIZE, GRID_SIZE, GRID_SIZE});
+    Context.gridOXZDrawable->SetLocalRotation ({M_PI / 2, 0.0f, 0.0f});
+
+    Context.gridOYZDrawable = new Drawable (Context.gridGeometry, Context.material);
+    Context.gridOYZDrawable->SetLocalScale ({GRID_SIZE, GRID_SIZE, GRID_SIZE});
+    Context.gridOYZDrawable->SetLocalRotation ({0.0f, M_PI / 2, 0.0f});
 
     Context.symbolGeometry = GenerateTSymbol ();
-    Context.symbolDrawable = new Drawable ();
-    Context.symbolDrawable->SetLinkedGeometry (Context.symbolGeometry);
-    Context.symbolDrawable->SetLinkedMaterial (Context.material);
+    Context.symbolDrawable = new Drawable (Context.symbolGeometry, Context.material);
 
     Context.perspectiveCamera = new PerspectiveCamera (M_PI / 3, 0.01f, 100.0f);
     Context.perspectiveCamera->SetLocalPosition ({0.0f, -10.0f, 5.0f});
@@ -189,7 +198,7 @@ static void SetupGLFW ()
     glfwWindowHint (GLFW_CONTEXT_VERSION_MAJOR, 2);
     glfwWindowHint (GLFW_CONTEXT_VERSION_MINOR, 0);
 
-    Context.window = glfwCreateWindow (1024, 768,
+    Context.window = glfwCreateWindow (1200, 900,
         "Konstantin Tomashevich CG Lab 6", NULL, NULL);
 
     if (!Context.window)
@@ -208,7 +217,21 @@ static void SetupGLFW ()
 
 static void RenderScene (const glm::mat4x4 &projection)
 {
-    Context.gridOXYDrawable->Draw (projection);
+    if (Context.showOXYGrid)
+    {
+        Context.gridOXYDrawable->Draw (projection);
+    }
+
+    if (Context.showOXZGrid)
+    {
+        Context.gridOXZDrawable->Draw (projection);
+    }
+
+    if (Context.showOYZGrid)
+    {
+        Context.gridOYZDrawable->Draw (projection);
+    }
+
     Context.symbolDrawable->Draw (projection);
 }
 
@@ -262,6 +285,13 @@ static void RenderUI (const glm::mat4x4 &projection)
         Context.symbolDrawable->SetLocalPosition (position);
         Context.symbolDrawable->SetLocalRotation (qRotation);
         Context.symbolDrawable->SetLocalScale (scale);
+    }
+
+    if (ImGui::CollapsingHeader ("Grids"))
+    {
+        ImGui::Checkbox ("OXY", &Context.showOXYGrid);
+        ImGui::Checkbox ("OXZ", &Context.showOXZGrid);
+        ImGui::Checkbox ("OYZ", &Context.showOYZGrid);
     }
 
     std::string stringBuffer;
