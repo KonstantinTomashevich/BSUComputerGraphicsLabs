@@ -385,15 +385,15 @@ static void RenderUI (const glm::mat4x4 &projection)
         glm::vec3 eulerRotation = glm::degrees (glm::eulerAngles (qRotation));
 
         glm::vec3 scale = Context.symbolDrawable->GetLocalScale ();
-        ImGui::InputFloat3 ("Position: ", glm::value_ptr (position));
-        ImGui::InputFloat4 ("Rotation: ", glm::value_ptr (qRotation));
+        ImGui::InputFloat3 ("Position", glm::value_ptr (position));
+        ImGui::InputFloat4 ("Rotation", glm::value_ptr (qRotation));
 
-        if (ImGui::InputFloat3 ("Rotation (euler, degrees): ", glm::value_ptr (eulerRotation)))
+        if (ImGui::InputFloat3 ("Rotation (euler, degrees)", glm::value_ptr (eulerRotation)))
         {
             qRotation = glm::quat (glm::radians (eulerRotation));
         }
 
-        ImGui::InputFloat3 ("Scale: ", glm::value_ptr (scale));
+        ImGui::InputFloat3 ("Scale", glm::value_ptr (scale));
         Context.symbolDrawable->SetLocalPosition (position);
         Context.symbolDrawable->SetLocalRotation (qRotation);
         Context.symbolDrawable->SetLocalScale (scale);
