@@ -7,6 +7,7 @@
 #include "EmptyMaterial.hpp"
 #include "Models.hpp"
 #include "OrthographicCamera.hpp"
+#include "DiffuseColorMaterial.hpp"
 
 #include <imgui.h>
 #include <examples/imgui_impl_glfw.h>
@@ -47,23 +48,34 @@ struct
     ImGuiIO *imGuiIO_ = nullptr;
     GLFWwindow *window = nullptr;
 
-    Shader *shader = nullptr;
-    AbstractMaterial *material = nullptr;
+    Shader *vertexColorShader = nullptr;
+    Shader *diffuseColorShader = nullptr;
+
+    AbstractMaterial *emptyMaterial = nullptr;
+    AbstractMaterial *materialDiffuseRed = nullptr;
+    AbstractMaterial *materialDiffuseGreen = nullptr;
+    AbstractMaterial *materialDiffuseBlue = nullptr;
 
     int selectedCamera = 0;
     CameraInfo cameras[4] = {nullptr};
 
     AbstractGeometry *symbolGeometry = nullptr;
     AbstractGeometry *gridGeometry = nullptr;
+    AbstractGeometry *xAxisLineGeometry = nullptr;
 
     Drawable *symbolDrawable = nullptr;
     Drawable *gridOXYDrawable = nullptr;
     Drawable *gridOXZDrawable = nullptr;
     Drawable *gridOYZDrawable = nullptr;
 
+    Drawable *xAxisDrawable = nullptr;
+    Drawable *yAxisDrawable = nullptr;
+    Drawable *zAxisDrawable = nullptr;
+
     bool showOXYGrid = true;
     bool showOXZGrid = false;
     bool showOYZGrid = false;
+    bool showAxis = true;
 } Context;
 
 static void ErrorCallback (int error, const char *description);
@@ -152,8 +164,13 @@ static void MatrixToString (const glm::mat4x4 &matrix, std::string &string)
 
 static void FreeResources ()
 {
-    delete Context.shader;
-    delete Context.material;
+    delete Context.vertexColorShader;
+    delete Context.diffuseColorShader;
+
+    delete Context.emptyMaterial;
+    delete Context.materialDiffuseRed;
+    delete Context.materialDiffuseGreen;
+    delete Context.materialDiffuseBlue;
 
     for (int index = 0; index < CAMERA_COUNT; ++index)
     {
@@ -162,11 +179,16 @@ static void FreeResources ()
 
     delete Context.symbolGeometry;
     delete Context.gridGeometry;
+    delete Context.xAxisLineGeometry;
 
     delete Context.symbolDrawable;
     delete Context.gridOXYDrawable;
     delete Context.gridOXZDrawable;
     delete Context.gridOYZDrawable;
+
+    delete Context.xAxisDrawable;
+    delete Context.yAxisDrawable;
+    delete Context.zAxisDrawable;
 
     ImGui_ImplOpenGL3_Shutdown ();
     ImGui_ImplGlfw_Shutdown ();
@@ -178,24 +200,42 @@ static void FreeResources ()
 
 static void SetupScene ()
 {
-    Context.shader = new Shader (vertexColorVertexShader, vertexColorFragmentShader);
-    Context.material = new EmptyMaterial ();
-    Context.material->SetLinkedShader (Context.shader);
+    Context.vertexColorShader = new Shader (vertexColorVertexShader, vertexColorFragmentShader);
+    Context.diffuseColorShader = new Shader (simpleVertexShader, diffuseFragmentShader);
+
+    Context.emptyMaterial = new EmptyMaterial ();
+    Context.emptyMaterial->SetLinkedShader (Context.vertexColorShader);
+
+    Context.materialDiffuseRed = new DiffuseColorMaterial ({255, 0, 0}, Context.diffuseColorShader);
+    Context.materialDiffuseGreen = new DiffuseColorMaterial ({0, 255, 0}, Context.diffuseColorShader);
+    Context.materialDiffuseBlue = new DiffuseColorMaterial ({0, 0, 255}, Context.diffuseColorShader);
 
     Context.gridGeometry = Generate2DGrid (21, 21, {150, 0, 0});
-    Context.gridOXYDrawable = new Drawable (Context.gridGeometry, Context.material);
+    Context.gridOXYDrawable = new Drawable (Context.gridGeometry, Context.emptyMaterial);
     Context.gridOXYDrawable->SetLocalScale ({GRID_SIZE, GRID_SIZE, GRID_SIZE});
 
-    Context.gridOXZDrawable = new Drawable (Context.gridGeometry, Context.material);
+    Context.gridOXZDrawable = new Drawable (Context.gridGeometry, Context.emptyMaterial);
     Context.gridOXZDrawable->SetLocalScale ({GRID_SIZE, GRID_SIZE, GRID_SIZE});
     Context.gridOXZDrawable->SetLocalRotation ({M_PI / 2, 0.0f, 0.0f});
 
-    Context.gridOYZDrawable = new Drawable (Context.gridGeometry, Context.material);
+    Context.gridOYZDrawable = new Drawable (Context.gridGeometry, Context.emptyMaterial);
     Context.gridOYZDrawable->SetLocalScale ({GRID_SIZE, GRID_SIZE, GRID_SIZE});
     Context.gridOYZDrawable->SetLocalRotation ({0.0f, M_PI / 2, 0.0f});
 
     Context.symbolGeometry = GenerateTSymbol ();
-    Context.symbolDrawable = new Drawable (Context.symbolGeometry, Context.material);
+    Context.symbolDrawable = new Drawable (Context.symbolGeometry, Context.emptyMaterial);
+
+    Context.xAxisLineGeometry = GenerateXAxisLine ();
+    Context.xAxisDrawable = new Drawable (Context.xAxisLineGeometry, Context.materialDiffuseRed);
+    Context.xAxisDrawable->SetLocalScale ({GRID_SIZE, 1.0f, 1.0f});
+
+    Context.yAxisDrawable = new Drawable (Context.xAxisLineGeometry, Context.materialDiffuseGreen);
+    Context.yAxisDrawable->SetLocalScale ({GRID_SIZE, 1.0f, 1.0f});
+    Context.yAxisDrawable->SetLocalRotation ({0.0f, 0.0f, M_PI / 2});
+
+    Context.zAxisDrawable = new Drawable (Context.xAxisLineGeometry, Context.materialDiffuseBlue);
+    Context.zAxisDrawable->SetLocalScale ({GRID_SIZE, 1.0f, 1.0f});
+    Context.zAxisDrawable->SetLocalRotation ({0.0f, -M_PI / 2, 0.0f});
 
     AbstractCamera *perspectiveCamera = new PerspectiveCamera (PROJECTION_FOV, NEAR, FAR);
     perspectiveCamera->SetLocalPosition ({0.0f, -10.0f, 5.0f});
@@ -284,6 +324,12 @@ static void RenderScene (const glm::mat4x4 &projection)
     }
 
     Context.symbolDrawable->Draw (projection);
+    if (Context.showAxis)
+    {
+        Context.xAxisDrawable->Draw (projection);
+        Context.yAxisDrawable->Draw (projection);
+        Context.zAxisDrawable->Draw (projection);
+    }
 }
 
 static void UpdateCamera ()
@@ -355,6 +401,7 @@ static void RenderUI (const glm::mat4x4 &projection)
 
     if (ImGui::CollapsingHeader ("Grids"))
     {
+        ImGui::Checkbox ("Axis", &Context.showAxis);
         ImGui::Checkbox ("OXY", &Context.showOXYGrid);
         ImGui::Checkbox ("OXZ", &Context.showOXZGrid);
         ImGui::Checkbox ("OYZ", &Context.showOYZGrid);

@@ -61,6 +61,19 @@ AbstractGeometry *GenerateTSymbol ()
     return geometry;
 }
 
+AbstractGeometry *GenerateXAxisLine ()
+{
+    auto *geometry = new Geometry <Position3fVertex, Position3fVertexConfigurator> ();
+    geometry->SetPrimitiveType (GL_TRIANGLES);
+
+    AddColumnToGeometry <Position3fVertex, Position3fVertexConfigurator> (
+        geometry, {0.0f, -0.025f, -0.025f}, {1.0f, 0.025f, 0.025f},
+        true, true, [] (Position3fVertex position) -> Position3fVertex { return position; });
+
+    geometry->UpdateBuffers ();
+    return geometry;
+}
+
 void AddPlaneToGeometry (GeometryBase *geometry, int v1, int v2, int v3, int v4)
 {
     geometry->AddTriangle (v1, v2, v3);

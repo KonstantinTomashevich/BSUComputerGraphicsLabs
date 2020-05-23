@@ -5,8 +5,10 @@ class DiffuseColorMaterial : public AbstractMaterial
 {
 public:
     DiffuseColorMaterial ();
+    DiffuseColorMaterial (const glm::vec3 &color, Shader *linkedShader);
+
     virtual ~DiffuseColorMaterial () = default;
-    void SetColor (float r, float g, float b);
+    void SetColor (const glm::vec3 &color);
 
 protected:
     void DoApply () override;

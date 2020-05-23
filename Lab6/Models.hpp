@@ -5,6 +5,7 @@
 
 AbstractGeometry *Generate2DGrid (int xLines, int yLines, Color3ubVertex color);
 AbstractGeometry *GenerateTSymbol ();
+AbstractGeometry *GenerateXAxisLine ();
 void AddPlaneToGeometry (GeometryBase *geometry, int v1, int v2, int v3, int v4);
 
 template <typename V, VertexConfigurator C> int AddHorizontalPlaceToGeometry (

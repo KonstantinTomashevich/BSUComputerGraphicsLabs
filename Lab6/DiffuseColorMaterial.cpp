@@ -3,14 +3,18 @@
 
 DiffuseColorMaterial::DiffuseColorMaterial ()
 {
-    SetColor (0.0f, 0.0f, 0.0f);
+    SetColor ({0.0f, 0.0f, 0.0f});
 }
 
-void DiffuseColorMaterial::SetColor (float r, float g, float b)
+DiffuseColorMaterial::DiffuseColorMaterial (const glm::vec3 &color, Shader *linkedShader)
 {
-    diffuseColor_[0] = r;
-    diffuseColor_[1] = g;
-    diffuseColor_[2] = b;
+    SetColor (color);
+    SetLinkedShader (linkedShader);
+}
+
+void DiffuseColorMaterial::SetColor (const glm::vec3 &color)
+{
+    diffuseColor_ = color;
 }
 
 void DiffuseColorMaterial::DoApply ()
